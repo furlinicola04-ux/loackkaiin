@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Diario di peso, alimentazione, sonno, wellness, BIA e partite.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lock-in">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>loackkainn</title>
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
+<meta name="color-scheme" content="light dark">
+<style>
+/* Stile iOS: sfondo raggruppato grigio, schede bianche senza bordo, testo di sistema (SF), numeri SF Rounded, barra schede in materiale traslucido, un solo colore di tinta (lampone Rovato) */
+:root{
+  --bg:#f2f2f7; --surface:#ffffff; --surface-solid:#ffffff; --fill:rgba(118,118,128,.12); --fill-2:rgba(118,118,128,.08);
+  --line:rgba(60,60,67,.16); --ink:#000000; --muted:rgba(60,60,67,.62); --muted-2:rgba(60,60,67,.36);
+  --accent:#c2185b; --accent-ink:#ffffff; --accent-soft:rgba(194,24,91,.11);
+  --mp:#ff2d55; --mc:#007aff; --mg:#ff9500; --track:rgba(118,118,128,.14);
+  --good:#248a3d; --warn:#c93400; --bad:#d70015; --good-bg:rgba(52,199,89,.16); --warn-bg:rgba(255,149,0,.16); --bad-bg:rgba(255,59,48,.14);
+  --chart:#5856d6; --chart-soft:rgba(88,86,214,.12); --chart-2:rgba(88,86,214,.38);
+  --c-peso:#5856d6; --c-cibo:#34c759; --c-sonno:#32ade6; --c-well:#ff2d55; --c-match:#c2185b;
+  --material:rgba(249,249,249,.78); --thumb:#ffffff; --scrim:rgba(0,0,0,.32);
+  --display:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --body:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;
+  --ease-sheet:cubic-bezier(.32,.72,0,1); color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#000000; --surface:#1c1c1e; --surface-solid:#1c1c1e; --fill:rgba(118,118,128,.24); --fill-2:rgba(118,118,128,.16);
+  --line:rgba(84,84,88,.6); --ink:#ffffff; --muted:rgba(235,235,245,.6); --muted-2:rgba(235,235,245,.3);
+  --accent:#ff5c93; --accent-ink:#2a0013; --accent-soft:rgba(255,92,147,.16);
+  --mp:#ff375f; --mc:#0a84ff; --mg:#ff9f0a; --track:rgba(118,118,128,.28);
+  --good:#30d158; --warn:#ff9f0a; --bad:#ff453a; --good-bg:rgba(48,209,88,.18); --warn-bg:rgba(255,159,10,.18); --bad-bg:rgba(255,69,58,.18);
+  --chart:#7d7aff; --chart-soft:rgba(125,122,255,.16); --chart-2:rgba(125,122,255,.4);
+  --c-peso:#7d7aff; --c-cibo:#30d158; --c-sonno:#64d2ff; --c-well:#ff375f; --c-match:#ff5c93;
+  --material:rgba(22,22,24,.78); --thumb:#636366; --scrim:rgba(0,0,0,.5); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#1c1c1e; --surface-solid:#1c1c1e; --fill:rgba(118,118,128,.24); --fill-2:rgba(118,118,128,.16);
+  --line:rgba(84,84,88,.6); --ink:#ffffff; --muted:rgba(235,235,245,.6); --muted-2:rgba(235,235,245,.3);
+  --accent:#ff5c93; --accent-ink:#2a0013; --accent-soft:rgba(255,92,147,.16);
+  --mp:#ff375f; --mc:#0a84ff; --mg:#ff9f0a; --track:rgba(118,118,128,.28);
+  --good:#30d158; --warn:#ff9f0a; --bad:#ff453a; --good-bg:rgba(48,209,88,.18); --warn-bg:rgba(255,159,10,.18); --bad-bg:rgba(255,69,58,.18);
+  --chart:#7d7aff; --chart-soft:rgba(125,122,255,.16); --chart-2:rgba(125,122,255,.4);
+  --c-peso:#7d7aff; --c-cibo:#30d158; --c-sonno:#64d2ff; --c-well:#ff375f; --c-match:#ff5c93;
+  --material:rgba(22,22,24,.78); --thumb:#636366; --scrim:rgba(0,0,0,.5); color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg);-webkit-tap-highlight-color:transparent;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.35;letter-spacing:-.01em;min-height:100dvh;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--material);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+button,a,[role="button"],label.btn,.seg label{touch-action:manipulation}
+button,.tab,.chip,.seg span,label.btn{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+h1,h2,h3{font-family:var(--body);margin:0;text-wrap:balance}
+h1{font-size:34px;font-weight:700;line-height:1.08;letter-spacing:-.022em}
+h2{font-size:22px;font-weight:700;line-height:1.2;letter-spacing:-.016em}
+h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums}
+main{max-width:720px;margin:0 auto;padding-block:max(12px,env(safe-area-inset-top,0px)) calc(110px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.view{display:grid;gap:20px}
+.eyebrow{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;color:var(--muted)}
+.eyebrow.acc{color:var(--accent)}
+.card{background:var(--surface);border-radius:16px;padding:16px;min-width:0}
+.hero{background:var(--surface);border-radius:20px;padding:18px;display:grid;gap:10px}
+.hero .big{font-family:var(--display);font-weight:700;font-size:54px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hero .big small{font-size:20px;font-weight:600;color:var(--muted);letter-spacing:-.01em}
+.sub{font-size:15px;color:var(--muted);letter-spacing:-.005em}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:13px 18px;font-weight:600;font-size:17px;letter-spacing:-.02em;cursor:pointer;background:var(--accent);color:var(--accent-ink);min-height:50px;transition:transform 120ms ease-out,opacity 120ms ease-out}
+.btn:active{transform:scale(.97);opacity:.85}
+.btn.ghost{background:var(--accent-soft);color:var(--accent)}
+.btn.link{background:transparent;color:var(--accent);padding:8px 4px;min-height:0;font-weight:400}
+.btn.link:active{transform:none;opacity:.5}
+.btn.danger{background:var(--bad-bg);color:var(--bad)}
+.btn.sm{padding:7px 14px;min-height:34px;font-size:15px;border-radius:999px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn svg,.ico svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ico{width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:var(--accent);display:inline-grid;place-items:center;cursor:pointer;flex:none;transition:transform 120ms ease-out}
+.ico:active{transform:scale(.9)}
+.ico.box{width:30px;height:30px;background:var(--fill);color:var(--muted)}
+.ico.box svg{width:15px;height:15px;stroke-width:2.6}
+.ico:disabled{opacity:.3}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}
+.note{display:flex;gap:12px;background:var(--surface);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.45;color:var(--muted)}
+.note b{color:var(--ink)}
+.note svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:2;flex:none;margin-top:1px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;border-radius:999px;padding:3px 10px;width:max-content;max-width:100%}
+.chip.good{background:var(--good-bg);color:var(--good)} .chip.warn{background:var(--warn-bg);color:var(--warn)} .chip.bad{background:var(--bad-bg);color:var(--bad)} .chip.neu{background:var(--fill);color:var(--muted)} .chip.acc{background:var(--accent-soft);color:var(--accent)}
+.tag{display:inline-block;justify-self:start;width:max-content;font-size:12px;font-weight:600;border-radius:6px;padding:3px 8px;background:var(--fill);color:var(--muted)}
+
+/* tessere stile app Salute: nome categoria colorato, numero grande arrotondato */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tile{background:var(--surface);border:0;border-radius:18px;padding:14px 16px 16px;display:grid;gap:4px;align-content:start;min-width:0;text-align:left;cursor:pointer;color:inherit;transition:transform 120ms ease-out}
+button.tile:active{transform:scale(.98)}
+.tile.wide{grid-column:1/-1}
+.tile .lab{font-size:15px;color:var(--tc,var(--muted));font-weight:600;letter-spacing:-.01em}
+.tile .v{font-family:var(--display);font-size:34px;font-weight:700;line-height:1.05;letter-spacing:-.025em;font-variant-numeric:tabular-nums;margin-top:6px}
+.tile .v small{font-size:16px;color:var(--muted);font-weight:600;margin-left:3px;letter-spacing:-.01em}
+.tile .s{font-size:13px;color:var(--muted);letter-spacing:0}
+
+/* barre macro */
+.macros{display:grid;gap:14px}
+.mbar .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:16px}
+.mbar .top b{font-family:var(--display);font-size:19px;font-weight:700}
+.mbar .top span.t{color:var(--muted);font-size:14px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.track{height:8px;border-radius:99px;background:var(--track);margin-top:6px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:99px;transition:width 400ms var(--ease-sheet)}
+.mbar .rem{font-size:13px;color:var(--muted);margin-top:5px}
+
+/* pasti */
+.meal{display:grid;gap:0}
+.meal-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-bottom:12px;border-bottom:.5px solid var(--line)}
+.meal-h .time{font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.02em}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:4px 6px;align-items:center;padding:12px 0;border-bottom:.5px solid var(--line)}
+.item .nm{font-weight:400;overflow-wrap:anywhere}
+.item .q{font-size:13px;color:var(--muted)}
+.item .k{text-align:right;font-variant-numeric:tabular-nums;font-size:15px;line-height:1.15;min-width:44px;font-weight:600}
+.item .k small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.mtot{display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;padding:14px 0 12px;font-variant-numeric:tabular-nums;font-size:15px}
+.mtot .p{color:var(--mp)} .mtot .c{color:var(--mc)} .mtot .g{color:var(--mg)}
+.mtot b{font-weight:700}
+.meal-f{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;border-top:.5px solid var(--line);padding-top:6px}
+.empty{color:var(--muted);font-size:15px;padding:14px 0}
+
+/* moduli: campi grigi senza bordo come in Impostazioni */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:420px){.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+label.f{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:500;min-width:0}
+.inp{width:100%;min-width:0;border:0;background:var(--fill);border-radius:10px;padding:12px 13px;font-size:17px;color:var(--ink);min-height:44px}
+.inp::placeholder{color:var(--muted-2)}
+.inp:focus{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}
+select.inp{-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+input[type=date].inp,input[type=time].inp{-webkit-appearance:none;appearance:none}
+textarea.inp{min-height:84px;resize:vertical;line-height:1.4}
+.hint{font-size:13px;color:var(--muted);margin:0;line-height:1.4;letter-spacing:0}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:12px;min-width:0}
+/* controllo segmentato iOS */
+.seg{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--fill);border-radius:9px;padding:2px}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;inset:0;margin:0}
+.seg span{display:block;text-align:center;padding:7px 0;border-radius:7px;font-family:var(--display);font-size:16px;font-weight:600;cursor:pointer;transition:background 160ms ease-out,box-shadow 160ms ease-out}
+.seg input:checked+span{background:var(--accent);color:var(--accent-ink);box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.08)}
+.seg input:focus-visible+span{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent)}
+.wrow{display:grid;grid-template-columns:minmax(0,118px) 1fr;gap:10px;align-items:center}
+.wrow .lab{font-size:15px;font-weight:500}
+.wrow .lab small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0}
+.switch input{width:22px;height:22px;accent-color:var(--accent)}
+.daynav{display:flex;align-items:center;gap:8px;justify-content:space-between;background:var(--surface);border-radius:16px;padding:6px}
+.daynav .d{text-align:center;flex:1;min-width:0}
+.daynav .d strong{font-size:17px;font-weight:600;display:block;line-height:1.2;text-transform:capitalize}
+.daynav input{border:0;background:transparent;color:var(--muted);font-size:13px;text-align:center;max-width:100%}
+
+/* tabelle con separatori sottili */
+.tbl-wrap{overflow-x:auto;margin:0 -4px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:15px}
+th{font-size:13px;font-weight:500;color:var(--muted);text-align:left;padding:6px 6px 8px;white-space:nowrap}
+td{padding:12px 6px;border-top:.5px solid var(--line);white-space:nowrap}
+td.nt{white-space:normal;color:var(--muted);font-size:13px;min-width:90px}
+tr.click{cursor:pointer;transition:background 120ms}
+tr.click:active{background:var(--fill-2)}
+
+/* grafici */
+.chart{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--body);font-size:11px;letter-spacing:0}
+.chart .grid{stroke:var(--line);stroke-width:.5}
+.chart .ln{fill:none;stroke:var(--chart);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.chart .ln2{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.chart .raw{fill:var(--chart-2)}
+.chart .area{fill:var(--chart-soft)}
+.chart .bar{fill:var(--chart)} .chart .bar.low{fill:var(--chart-2)} .chart .bar.match{fill:var(--accent)}
+.chart .tgt{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 4}
+.chart .end{fill:var(--chart);stroke:var(--surface);stroke-width:2.5}
+.chart .endlbl{fill:var(--ink);font-weight:700;font-size:12px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;background:var(--chart);vertical-align:3px;margin-right:5px}
+.legend i.dot2{width:7px;height:7px;border-radius:50%;background:var(--chart-2);vertical-align:1px}
+.legend i.dash{background:none;border-top:2px dashed var(--accent);height:0}
+.legend i.acc{background:var(--accent)}
+.legend i.low{background:var(--chart-2)}
+.seg-t{display:inline-flex;background:var(--fill);border-radius:9px;padding:2px;gap:0}
+.seg-t button{border:0;background:transparent;border-radius:7px;padding:6px 12px;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:background 160ms ease-out}
+.seg-t button[aria-pressed="true"]{background:var(--thumb);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.06)}
+
+/* BIA */
+.bia-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bia-grid .tile.wide{grid-column:1/-1}
+.ref{position:relative;height:8px;border-radius:99px;margin-top:10px;background:var(--fill)}
+.ref .ok{position:absolute;top:0;bottom:0;background:var(--good);opacity:.45;border-radius:99px}
+.ref .me{position:absolute;top:-4px;width:4px;height:16px;border-radius:3px;background:var(--ink);transform:translateX(-2px);box-shadow:0 0 0 2px var(--surface)}
+.ref-l{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.delta{font-size:13px;font-weight:600}
+.delta.up{color:var(--good)} .delta.down{color:var(--bad)} .delta.flat{color:var(--muted)}
+
+/* partite */
+.mcard{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:start}
+.mdate{text-align:center;border-right:.5px solid var(--line);padding-right:10px;color:var(--accent)}
+.mdate b{display:block;font-family:var(--display);font-size:32px;font-weight:700;line-height:1}
+.mdate span{display:block;font-size:13px;font-weight:600;text-transform:uppercase;margin-top:6px}
+.mdate span+span{color:var(--muted);font-weight:400;margin-top:0}
+.mteams{font-weight:700;font-size:19px;line-height:1.25;overflow-wrap:anywhere;margin-top:8px;letter-spacing:-.015em}
+.mteams .vs{display:block;font-size:13px;font-weight:500;color:var(--muted);margin:2px 0}
+.mscore{font-family:var(--display);font-weight:700;font-size:26px;font-variant-numeric:tabular-nums}
+.res{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;font-weight:700;font-family:var(--display)}
+.res.V{background:var(--good-bg);color:var(--good)} .res.P{background:var(--bad-bg);color:var(--bad)} .res.N{background:var(--warn-bg);color:var(--warn)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px}
+.stats div{display:grid}
+.stats b{font-family:var(--display);font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.stats span{font-size:13px;color:var(--muted)}
+
+/* menu Altro: elenco raggruppato con icone su quadratini colorati */
+.menu{display:grid;background:var(--surface);border-radius:16px;overflow:hidden}
+.menu button{display:grid;grid-template-columns:30px minmax(0,1fr) 14px;gap:14px;align-items:center;text-align:left;padding:11px 16px;border:0;background:transparent;cursor:pointer;color:inherit;position:relative;transition:background 120ms}
+.menu button:active{background:var(--fill-2)}
+.menu button+button::before{content:"";position:absolute;top:0;right:0;left:60px;border-top:.5px solid var(--line)}
+.menu .mi{width:30px;height:30px;border-radius:7px;background:var(--mc-i,var(--accent));color:#fff;display:grid;place-items:center}
+.menu button:nth-child(1) .mi{--mc-i:#32ade6} .menu button:nth-child(2) .mi{--mc-i:#5856d6} .menu button:nth-child(3) .mi{--mc-i:#c2185b}
+.menu button:nth-child(7) .mi{--mc-i:#007aff} .menu button:nth-child(4) .mi{--mc-i:#34c759} .menu button:nth-child(5) .mi{--mc-i:#ff9500} .menu button:nth-child(6) .mi{--mc-i:#8e8e93}
+.menu .mi svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.menu strong{display:block;font-weight:400}
+.menu small{display:block;color:var(--muted);font-size:13px}
+.menu>button>svg{width:14px;height:14px;stroke:var(--muted-2);fill:none;stroke-width:2.5}
+.back{display:inline-flex;align-items:center;gap:2px;background:none;border:0;color:var(--accent);font-size:17px;padding:6px 0;cursor:pointer;width:max-content}
+.back:active{opacity:.5}
+
+/* piano */
+.plan-g{padding:10px 0;border-top:.5px solid var(--line)}
+.plan-g:first-of-type{border-top:0}
+.plan-g ul{margin:6px 0 0;padding-left:18px;font-size:15px;color:var(--muted)}
+.plan-g li{margin:2px 0}
+
+/* foglio dal basso: scrim che oscura, foglio che sale e scende per la stessa strada */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 320ms ease-out both}
+.sheet{background:var(--bg);width:100%;max-width:720px;max-height:92dvh;overflow:auto;border-radius:14px 14px 0 0;padding:8px 16px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));display:grid;gap:14px;align-content:start;overscroll-behavior:contain;animation:sheetUp 480ms var(--ease-sheet) both;box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+.sheet::before{content:"";justify-self:center;width:36px;height:5px;border-radius:3px;background:var(--muted-2);margin-bottom:2px}
+.scrim.out{animation:fadeOut 260ms ease-in both}
+.scrim.out .sheet{animation:sheetDown 300ms var(--ease-sheet) both}
+@keyframes fadeIn{from{opacity:0}} @keyframes fadeOut{to{opacity:0}}
+@keyframes sheetUp{from{transform:translateY(100%)}} @keyframes sheetDown{to{transform:translateY(100%)}}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:-8px;background:var(--bg);padding-block:6px;z-index:1}
+.sheet-h h2{font-size:20px}
+.sheet .results,.sheet .note{background:var(--surface);border-radius:12px}
+.sheet .results{padding:0 14px}
+.results{display:grid}
+.results button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;text-align:left;border:0;border-top:.5px solid var(--line);background:transparent;padding:11px 0;cursor:pointer;color:inherit;transition:opacity 120ms}
+.results button:active{opacity:.5}
+.results button:first-child{border-top:0}
+.results .rn{font-weight:400;overflow-wrap:anywhere}
+.results .rs{font-size:13px;color:var(--muted)}
+.results .rk{font-variant-numeric:tabular-nums;font-size:13.5px;color:var(--muted);text-align:right}
+.pick{display:grid;gap:6px;background:var(--surface);border-radius:12px;padding:12px}
+.pick label.inc{display:flex;gap:10px;align-items:center;font-weight:600;font-size:15px}
+.pick input[type=checkbox]{width:22px;height:22px;accent-color:var(--accent)}
+
+/* barra schede in materiale traslucido, il contenuto scorre sotto */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--material);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-top:.5px solid var(--line);padding-top:6px;padding-bottom:max(8px,env(safe-area-inset-bottom,0px));padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+.tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.tabs button{border:0;background:transparent;padding:4px 4px 2px;display:grid;justify-items:center;gap:2px;font-size:10.5px;font-weight:500;letter-spacing:.01em;color:var(--muted);cursor:pointer;transition:transform 120ms ease-out}
+.tabs button:active{transform:scale(.92)}
+.tabs svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected="true"]{color:var(--accent)}
+.tabs button[aria-selected="true"] svg{stroke-width:2.1}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,8px) scale(.96);background:var(--material);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);color:var(--ink);padding:11px 18px;border-radius:999px;font-size:15px;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity 220ms ease-out,transform 320ms var(--ease-sheet);max-width:90%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.16)}
+.toast.on{opacity:1;transform:translate(-50%,0) scale(1)}
+.foot{font-size:13px;color:var(--muted);text-align:center;display:flex;justify-content:center;gap:6px;align-items:center}
+.foot b{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn)}
+.foot.ok b{background:var(--good)}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tools .btn{font-size:15px;padding:10px 8px;min-height:46px}
+.busy{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:15px;padding:6px 0}
+.busy::before{content:"";width:16px;height:16px;border-radius:50%;border:2px solid var(--fill);border-top-color:var(--muted);animation:spin .8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{font-size:15px;font-weight:600;color:var(--accent);text-decoration:none;border-radius:999px;padding:8px 14px;background:var(--accent-soft)}
+@media (hover:hover) and (pointer:fine){.results button:hover,.menu button:hover{background:var(--fill-2)} .btn:hover{opacity:.9}}
+@media (prefers-reduced-motion:reduce){
+  .sheet,.scrim.out .sheet{animation:none} .scrim{animation-duration:150ms}
+  .toast{transition:opacity 150ms;transform:translate(-50%,0)} .btn:active,button.tile:active,.tabs button:active,.ico:active{transform:none}
+  .track i{transition:none}}
+@media (prefers-reduced-transparency:reduce){.tabs,.toast,body::before{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media (prefers-contrast:more){:root{--line:rgba(60,60,67,.5)} .card,.tile,.hero,.menu{box-shadow:0 0 0 1px var(--line)}}
+</style>
+</head>
+<body>
+<main id="app"><div class="view"><div class="hero"><span class="eyebrow">loackkainn</span><h1>Caricamento del diario…</h1></div></div></main>
+
+<nav class="tabs" aria-label="Sezioni">
+  <div class="tabs-in" role="tablist">
+    <button role="tab" data-tab="home" aria-selected="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="2"/></svg>Home</button>
+    <button role="tab" data-tab="peso" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3.2 3.2 0 0 0 6 0L5 7zM19 7l-3 7a3.2 3.2 0 0 0 6 0l-3-7z"/></svg>Peso</button>
+    <button role="tab" data-tab="pasti" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M6 3v7a2 2 0 0 0 4 0V3M8 10v11M17 21V3c-2.5 1-3.5 4-3.5 7.5 0 1.5 1 2.5 3.5 2.5"/></svg>Pasti</button>
+    <button role="tab" data-tab="altro" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Altro</button>
+  </div>
+</nav>
+<div id="sheetRoot"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const FOODS={"2/3 di grassi, animali e 1/3 di grassi vegetali":[760,0.7,0.4,84.0,"I"],"Acciuga o alice, fresca":[96,16.8,1.5,2.6,"I"],"Acciuga o sotto sale":[137,25.0,2.3,3.1,"I"],"Acciuga o sott’olio":[206,25.9,0.2,11.3,"I"],"Aglio":[41,0.9,8.4,0.6,"I"],"Agnello":[159,20.0,0,8.8,"I"],"Agnello, coscio crudo":[103,20.0,0,2.5,"I"],"Agnello, coscio, cotto":[165,31.1,0,4.5,"I"],"Agnello, costoletta cruda":[106,20.4,0,2.7,"I"],"Agnello, costoletta, cotta":[153,28.7,0,4.2,"I"],"Agnello, cotto":[270,35.6,0,14.2,"I"],"Agretti, cotti":[45,4.8,5.6,0.5,"I"],"Agretti, crudi":[17,1.8,2.2,0.2,"I"],"Albicocche, disidratate":[349,5.6,84.6,1.0,"I"],"Albicocche, fresche":[28,0.4,6.8,0.1,"I"],"Albicocche, sciroppate":[63,0.4,16.1,0.1,"I"],"Albicocche, secche":[274,5.0,66.5,0.5,"I"],"Albume d’uovo":[43,10.7,0,0,"I"],"Amarene":[42,0.8,10.2,0,"I"],"Amido":[327,0.3,86.8,0,"I"],"Aminoacidi essenziali (EAA)":[400,100,0,0,"S"],"Anacardi":[598,15.0,33.0,46.0,"I"],"Ananas, fresco":[40,0.5,10.0,0,"I"],"Ananas, sciroppato":[64,0.5,16.6,0,"I"],"Anatra domestica":[159,21.4,0,8.2,"I"],"Anguilla, di fiume":[261,11.8,0.1,23.7,"I"],"Anguilla, di mare":[237,14.6,0.7,19.6,"I"],"Anguilla, d’allevamento, filetti":[319,14.2,0.5,28.9,"I"],"Anguilla, marinata":[259,14.8,0.6,21.9,"I"],"Anona":[68,1.8,15.8,0.2,"I"],"Arachidi, tostate":[598,29.0,8.5,50.0,"I"],"Aragosta, bollita":[107,20.2,1.3,2.4,"I"],"Aragosta, fresca":[85,16.0,1.0,1.9,"I"],"Arance":[34,0.7,7.8,0.2,"I"],"Arance, succo":[33,0.5,8.2,0,"I"],"Aranciata":[38,0.1,10.0,0,"I"],"Aringa, affumicata":[194,19.9,0,12.7,"I"],"Aringa, fresca":[216,16.5,0,16.7,"I"],"Aringa, marinata":[199,18.3,0,14.0,"I"],"Aringa, sotto sale":[218,19.8,0,15.4,"I"],"Asparagi, cotti":[41,5.1,4.7,0.3,"I"],"Asparagi, di bosco":[35,4.6,4.0,0.2,"I"],"Asparagi, di campo crudi":[29,3.6,3.3,0.2,"I"],"Asparagi, di serra":[24,3.0,3.0,0.1,"I"],"Avocado":[231,4.4,1.8,23.0,"I"],"Babaco":[21,0.7,4.5,0.2,"I"],"Babà al rhum":[229,5.9,41.2,5.7,"I"],"Banana":[89,1.1,22.8,0.3,"W"],"Banane":[65,1.2,15.4,0.3,"I"],"Barbabietole, rosse crude":[19,1.1,4.0,0,"I"],"Barretta al, cocco ricoperta di cioccolato":[472,4.8,58.2,26.1,"I"],"Barretta proteica (media)":[360,33,33,12,"S"],"Basilico":[39,3.1,5.1,0.8,"I"],"Bevanda di mandorla senza zucchero":[13,0.4,0,1.1,"S"],"Bevanda tipo, cola":[39,0,10.5,0,"I"],"Bieta, cotta":[36,2.8,6.0,0.2,"I"],"Bieta, cruda":[17,1.3,2.8,0.1,"I"],"Big-burger, (peso medio 191":[221,13.5,17.0,11.5,"I"],"Biscotti Oro Saiwa":[422,7.5,76,9.5,"S"],"Biscotti Plasmon":[437,7.8,75,11,"S"],"Biscotti, alla soia":[366,11.5,70.8,6.1,"I"],"Biscotti, frollini":[429,7.2,73.7,13.8,"I"],"Biscotti, integrali":[425,7.8,70.8,14.3,"I"],"Biscotti, integrali con soia":[456,11.5,60.4,20.4,"I"],"Biscotti, per l’infanzia":[416,13.8,75.7,8.5,"I"],"Biscotti, secchi":[416,6.6,84.8,7.9,"I"],"Biscotti, wafers":[454,7.1,77.6,15.0,"I"],"Biscotto con, crema, zabaione e cioccolato":[271,5.3,49.1,7.3,"I"],"Boga":[87,18.3,0.8,1.2,"I"],"Bovino adulto, costata":[140,21.3,0,6.1,"I"],"Bovino adulto, girello":[110,21.3,0,2.8,"I"],"Bovino adulto, tagli anteriori":[145,20.5,0,7.0,"I"],"Bovino adulto, tagli posteriori":[117,21.5,0,3.4,"I"],"Bresaola":[151,32.0,0,2.6,"I"],"Brie":[319,19.3,0,26.9,"I"],"Broccoletti, cotti":[32,4.2,3.1,0.4,"I"],"Broccoletti, di rapa, crudi":[22,2.9,2.0,0.3,"I"],"Broccolo a, cotto":[39,4.3,4.5,0.5,"I"],"Broccolo a, testa, crudo":[27,3.0,3.1,0.4,"I"],"Burrini":[527,22.1,4.1,47.0,"I"],"Burro":[758,0.8,1.1,83.4,"I"],"Burro di arachidi":[600,25,15,50,"S"],"Butirro calabro":[440,24.7,0.3,37.8,"I"],"Cacao in vaschetta":[173,3.6,25.3,7.1,"I"],"Cacao, amaro in polvere":[355,20.4,11.5,25.6,"I"],"Caciocavallo":[439,37.7,2.3,31.1,"I"],"Cacioricotta, di capra":[178,11.9,0.5,14.3,"I"],"Caciotta romana, di pecora":[364,27.7,2.1,27.3,"I"],"Caciotta toscana":[368,24.6,0.8,29.6,"I"],"Caciotta, mista":[384,24.5,1.8,31.0,"I"],"Caciottina, fresca":[263,17.3,0.5,21.3,"I"],"Caciottina, mista":[370,26.9,1.5,28.5,"I"],"Caciottina, vaccina":[324,21.1,3.0,25.4,"I"],"Caffè in vaschetta":[245,5.1,23.9,15.0,"I"],"Caffè tostato":[287,10.4,28.5,15.4,"I"],"Calamaro":[68,12.6,0.6,1.7,"I"],"Calamaro, fresco":[68,12.6,0.6,1.7,"I"],"Calamaro, surgelato":[68,13.1,0.6,1.5,"I"],"Camembert":[297,20.9,0,23.7,"I"],"Canditi":[292,3.5,73.7,0.2,"I"],"Cannoli alla, crema":[368,6.2,41.9,20.7,"I"],"Capitone":[247,13.0,0.5,21.5,"I"],"Capocollo":[450,20.8,1.4,40.2,"I"],"Capretto":[122,19.2,0,5.0,"I"],"Caramelle, dure":[344,0,91.6,0,"I"],"Caramelle, tipo “mou”":[430,2.1,71.1,17.2,"I"],"Carciofi":[82,10.1,9.3,0.7,"I"],"Carciofi, crudi":[22,2.7,2.5,0.2,"I"],"Carciofi, surgelati crudi":[22,2.7,2.5,0.2,"I"],"Cardi, cotti":[73,4.5,12.9,0.7,"I"],"Cardi, crudi":[10,0.6,1.7,0.1,"I"],"Carne bovina, in gelatina, in scatola":[67,12.6,0,1.8,"I"],"Carne bovina, pressata, in scatola":[141,16.5,0,8.3,"I"],"Carote":[84,2.6,18.3,0.5,"I"],"Carote, crude":[35,1.1,7.6,0.2,"I"],"Carpa":[140,18.9,0,7.1,"I"],"Carrube":[207,3.3,49.9,0.7,"I"],"Castagne, arrostite":[193,3.7,41.8,2.4,"I"],"Castagne, bollite":[120,2.5,26.1,1.3,"I"],"Castagne, fresche":[165,2.9,36.7,1.7,"I"],"Castagne, secche":[287,6.0,62.0,3.4,"I"],"Cavallo":[143,19.8,0.6,6.8,"I"],"Cavolfiore, cotto":[40,5.3,4.4,0.3,"I"],"Cavolfiore, crudo":[25,3.2,2.7,0.2,"I"],"Cavoli di Bruxelles, cotti":[59,6.7,6.6,0.8,"I"],"Cavoli di Bruxelles, crudi":[37,4.2,4.2,0.5,"I"],"Cavolo broccolo":[105,15.0,8.9,1.3,"I"],"Cavolo broccolo, verde ramoso, crudo":[24,3.4,2.0,0.3,"I"],"Cavolo cappuccio, cotto":[21,2.3,2.8,0.1,"I"],"Cavolo cappuccio, rosso":[20,1.9,2.7,0.2,"I"],"Cavolo cappuccio, verde, crudo":[19,2.1,2.5,0.1,"I"],"Ceci, in scatola, scolati":[100,6.7,13.9,2.3,"I"],"Ceci, secchi, cotti":[120,7.0,18.9,2.4,"I"],"Ceci, secchi, crudi":[316,20.9,46.9,6.3,"I"],"Cefalo muggine":[127,15.8,0.7,6.8,"I"],"Cefalo muggine, uova (bottarga)":[373,35.5,0,25.7,"I"],"Cernia, surgelata":[88,17.0,0.5,2.0,"I"],"Cervello di, bovino":[157,10.0,0.8,12.7,"I"],"Cetrioli":[14,0.7,1.8,0.5,"I"],"Cheddar":[381,25.0,0.5,31.0,"I"],"Cheese-burger, (peso medio 132 g)":[255,14.0,21.6,13.1,"I"],"Ciccioli":[523,40.8,0,40.0,"I"],"Cicoria da, taglio, coltivata":[12,1.2,1.7,0.1,"I"],"Cicoria di campo":[10,1.4,0.7,0.2,"I"],"Cicoria di campo, cruda":[10,1.4,0.7,0.2,"I"],"Cicoria Witloof, o indivia belga":[18,0.7,3.2,0.3,"I"],"Ciliege, candite":[251,0.4,66.4,0,"I"],"Ciliege, fresche":[38,0.8,9.0,0.1,"I"],"Cioccolato fondente 90%":[592,10,14,55,"S"],"Cioccolato, al latte":[545,7.3,50.5,36.3,"I"],"Cioccolato, al latte con nocciole":[543,7.2,48.6,36.9,"I"],"Cioccolato, fondente":[515,6.6,49.7,33.6,"I"],"Cipolle, cotte":[109,4.1,23.6,0.4,"I"],"Cipolle, crude":[26,1.0,5.7,0.1,"I"],"Cipolline, cotte":[101,3.4,22.6,0.3,"I"],"Cipolline, crude":[38,1.3,8.5,0.1,"I"],"Clementine":[37,0.9,8.7,0.1,"I"],"Cocco":[899,0.0,0,99.9,"I"],"Cocco, essiccato":[604,5.6,6.4,62.0,"I"],"Cocco, fresco":[364,3.5,9.4,35.0,"I"],"Cocktail di, frutta sciroppata":[57,0.4,14.8,0,"I"],"Cocomero":[16,0.4,3.7,0,"I"],"Colza":[899,0.0,0,99.9,"I"],"Con, pomodoro":[243,7.1,41.4,6.6,"I"],"Con, pomodoro e mozzarella":[271,5.6,52.9,5.6,"I"],"Coniglio, coscio":[137,21.0,0,5.9,"I"],"Coniglio, intero":[118,19.9,0,4.3,"I"],"Coniglio, intero, cotto":[166,27.9,0,6.0,"I"],"Coniglio, intero, surgelato":[116,20.3,0,3.9,"I"],"Cono panna, e cioccolato":[291,5.1,34.9,15.5,"I"],"Cono panna, scaglie di cioccolato e noccioline":[326,4.2,33.3,20.5,"I"],"Coppa Parma":[398,23.6,0.6,33.5,"I"],"Coregone":[135,19.0,0.1,6.5,"I"],"Corned beef, in scatola":[219,23.2,0,14.0,"I"],"Cornetti":[411,7.2,58.0,18.3,"I"],"Cornflakes":[361,6.6,87.4,0.8,"I"],"Corvina":[88,20.0,0.2,0.8,"I"],"Cotechino, confezionato precotto":[450,17.2,0,42.3,"I"],"Cotechino, confezionato precotto, cotto":[307,21.1,0,24.7,"I"],"Couscous Barilla":[362,12.5,72.5,1.6,"S"],"Cozza o mitilo":[84,11.7,3.4,2.7,"I"],"Crackers senza grassi":[390,11,80,2,"S"],"Crackers, al formaggio":[502,9.8,62.1,25.5,"I"],"Crackers, alla soia":[412,13.1,67.7,11.7,"I"],"Crackers, salati":[428,9.4,80.1,10.0,"I"],"Cracotte":[348,10.5,78.8,1.2,"I"],"Creatina monoidrato":[0,0,0,0,"S"],"Crema di latte, - 12% di lipidi":[140,2.8,4.4,12.5,"I"],"Crema di nocciole, e cacao":[537,6.9,58.1,32.4,"I"],"Crescenza":[281,16.1,1.9,23.3,"I"],"Croissants":[358,8.3,38.0,20.3,"I"],"Crostata, con crema al cacao":[492,4.6,67.0,24.7,"I"],"Crostata, con marmellata":[339,4.9,65.5,8.2,"I"],"Crostata, con marmellata di albicocche":[421,0.9,71.7,16.5,"I"],"Crusca di frumento":[206,14.1,26.6,5.5,"I"],"Cuore, di bovino":[123,16.8,0.5,6.0,"I"],"Cuore, di equino":[146,18.7,0.6,7.7,"I"],"Cuore, di ovino":[134,16.9,0.4,7.2,"I"],"Cuore, di suino":[159,18.3,0.4,9.4,"I"],"Da, latte, intero":[66,3.8,4.3,3.9,"I"],"Da, latte, parzialmente scremato":[43,3.4,3.8,1.7,"I"],"Da, latte, scremato":[36,3.3,4.0,0.9,"I"],"Dadi da brodo":[250,15.7,5.0,18.7,"I"],"Daino":[95,21.0,0,1.2,"I"],"Datteri, secchi":[253,2.7,63.1,0.6,"I"],"Decorticato":[360,11.0,74.1,4.2,"I"],"Dentice, fresco":[101,16.7,0.7,3.5,"I"],"Dentice, surgelato":[103,17.2,0.7,3.5,"I"],"Dolce verde":[266,19.1,2.5,20.0,"I"],"Dolce, in scatola, sgocciolato":[98,3.4,19.5,1.3,"I"],"Dolci":[53,1.0,12.6,0.2,"I"],"Dolci, secche":[603,22.0,4.6,55.3,"I"],"Emmenthal":[403,28.5,3.6,30.6,"I"],"Fagiano":[144,24.3,0,5.2,"I"],"Fagioli dall’occhio, secchi":[293,22.4,50.9,1.4,"I"],"Fagioli, Borlotti freschi":[69,5.7,11.2,0.5,"I"],"Fagioli, Borlotti freschi, crudi":[133,10.2,22.7,0.8,"I"],"Fagioli, Borlotti in scatola, scolati":[91,6.7,15.9,0.5,"I"],"Fagioli, Borlotti secchi, cotti":[93,6.9,16.4,0.4,"I"],"Fagioli, Borlotti secchi, crudi":[278,20.2,47.7,2.0,"I"],"Fagioli, Cannellini in scatola, scolati":[76,6.0,12.5,0.6,"I"],"Fagioli, Cannellini secchi, cotti":[91,8.0,14.9,0.4,"I"],"Fagioli, Cannellini secchi, crudi":[279,23.4,45.5,1.6,"I"],"Fagioli, cotti":[102,7.9,17.0,0.7,"I"],"Fagioli, crudi":[291,23.6,47.5,2.0,"I"],"Fagiolini, cotti":[25,1.7,4.6,0.1,"I"],"Fagiolini, freschi, crudi":[18,2.1,2.4,0.1,"I"],"Faraona, coscio, con pelle, crudo":[133,24.3,0.3,3.8,"I"],"Faraona, coscio, senza pelle, crudo":[127,24.0,0.3,3.3,"I"],"Faraona, cotto":[194,34.4,0.3,6.1,"I"],"Faraona, petto, senza pelle, cotto":[146,30.7,0.2,2.5,"I"],"Faraona, petto, senza pelle, crudo":[121,25.8,0.2,1.9,"I"],"Farina di castagne":[343,6.1,76.2,3.7,"I"],"Farina, avena":[385,12.6,72.3,7.1,"I"],"Farina, frumento duro":[314,12.9,63.2,2.8,"I"],"Farina, frumento integrale":[319,11.9,67.8,1.9,"I"],"Farina, frumento tipo 0":[341,11.5,76.2,1.0,"I"],"Farina, frumento tipo 00":[340,11.0,77.3,0.7,"I"],"Farina, mais":[362,8.7,80.8,2.7,"I"],"Farina, orzo":[357,10.6,79.3,1.9,"I"],"Farina, riso":[360,7.3,87.0,0.5,"I"],"Farina, segale":[311,11.7,65.0,2.3,"I"],"Farina, soia":[446,36.8,23.4,23.5,"I"],"Farro":[335,15.1,67.1,2.5,"I"],"Fave, fresche":[49,6.1,5.3,0.5,"I"],"Fave, fresche crude":[41,5.2,4.5,0.4,"I"],"Fave, secche sgusciate, crude":[341,27.2,54.8,3.0,"I"],"Fave, secche, crude":[224,21.3,29.7,3.0,"I"],"Fecola di patate":[346,1.4,90.7,0,"I"],"Fegato, di bovino":[142,20.0,5.9,4.4,"I"],"Fegato, di equino":[145,22.4,5.3,4.0,"I"],"Fegato, di merluzzo":[899,0.0,0,99.9,"I"],"Fegato, di ovino":[135,19.5,2.0,5.5,"I"],"Fegato, di suino, crudo":[140,22.8,1.5,4.8,"I"],"Feijoa":[46,0.7,9.6,0.8,"I"],"Fesa":[103,21.8,0,1.8,"I"],"Fesa di tacchino a fette (affettato)":[106,24,0,1.1,"W"],"Feta":[250,15.6,1.5,20.2,"I"],"Fette biscottate integrali":[379,14.2,62.0,10.0,"I"],"Fette biscottate, integrali":[379,14.2,62.0,10.0,"I"],"Fette biscottate, normali":[408,11.3,82.3,6.0,"I"],"Fette Wasa integrali":[341,9,63,1.5,"S"],"Fichi d’India":[53,0.8,13.0,0.1,"I"],"Fichi, freschi":[47,0.9,11.2,0.2,"I"],"Filetto":[127,20.5,0,5.0,"I"],"Finocchi, cotti":[25,3.5,2.9,0,"I"],"Finocchi, crudi":[9,1.2,1.0,0,"I"],"Fiocchi di":[268,20.6,0.7,20.3,"I"],"Fiocchi di latte":[87,12.9,2.6,2.5,"W"],"Fiocchi di, formaggio magro":[115,9.7,3.2,7.1,"I"],"Fiocchi d’avena":[373,8.0,72.8,7.5,"I"],"Fior di latte, in vaschetta":[218,4.2,20.7,13.7,"I"],"Fior di latte, ricoperto di sorbetto alla fragola":[101,1.4,21.3,1.7,"I"],"Fiori di zucca":[12,1.7,0.5,0.4,"I"],"Foglie di rapa":[22,2.6,2.8,0.1,"I"],"Fontina":[343,24.5,0.8,26.9,"I"],"Formaggino":[309,11.2,6.0,26.9,"I"],"Formaggino, cremoso spalmabile":[313,8.6,0,31.0,"I"],"Formaggino, cremoso spalmabile, light":[179,9.2,3.1,14.5,"I"],"Formaggino, meno grasso":[239,14.7,6.5,17.3,"I"],"Formaggio, molle da tavola":[377,25.4,1.0,30.2,"I"],"Fragole":[27,0.9,5.3,0.4,"I"],"Frumento, duro":[312,13.0,62.5,2.9,"I"],"Frumento, tenero":[317,12.3,65.2,2.6,"I"],"Frutta fresca (media)":[50,0.8,11,0.2,"S"],"Frutta secca (media)":[610,18,9,54,"S"],"Funghi coltivati, cotti":[58,4.7,9.6,0.4,"I"],"Funghi coltivati, Pleurotus, crudi":[28,2.2,4.5,0.3,"I"],"Funghi coltivati, Prataioli, crudi":[20,3.7,0.8,0.2,"I"],"Funghi ovuli":[26,3.9,1.0,0.7,"I"],"Gallette di riso":[380,8,81,2.8,"S"],"Gallina":[194,20.9,0,12.3,"I"],"Gamberetti surgelati":[85,16.5,2.9,0.9,"I"],"Gamberi, freschi":[71,13.6,2.9,0.6,"I"],"Gamberi, sgusciati, surgelati":[85,16.5,2.9,0.9,"I"],"Gelato (medio)":[201,3.5,24.4,10.7,"W"],"Geretto, anteriore e posteriore":[112,20.9,0,3.2,"I"],"Germe di frumento, 1":[408,28.0,55.0,10.0,"I"],"Germe, di grano":[899,0.0,0,99.9,"I"],"Germogli di, soia":[49,6.2,3.0,1.4,"I"],"Ghiacciolo, all’arancio":[137,0.0,36.5,0,"I"],"Gnocchi freschi di patate Esselunga":[155,4,33,0.5,"S"],"Gomme da, masticare":[263,0.0,70.0,0,"I"],"Gorgonzola":[324,19.1,1.0,27.1,"I"],"Grana":[392,33.9,0,28.5,"I"],"Granchio, in scatola":[81,18.1,0,0.9,"I"],"Grano saraceno":[314,12.4,62.5,3.3,"I"],"Greco, da latte intero":[115,6.4,2.0,9.1,"I"],"Grissini":[431,12.3,68.4,13.9,"I"],"Groviera":[389,30.6,1.5,29.0,"I"],"Guava":[20,0.7,3.5,0.5,"I"],"Halibut, fresco":[114,20.6,0,3.5,"I"],"Hamburger, (peso medio 111 g)":[242,13.6,24.8,10.5,"I"],"Hummus di ceci":[177,4.8,19.8,8.5,"W"],"In, salamoia, sgocciolato":[103,25.1,0,0.3,"I"],"Indivia":[16,0.9,2.7,0.3,"I"],"Italico":[316,21.2,1.2,25.2,"I"],"Kebab (piadina/panino completo)":[159,9.7,19.8,4.3,"W"],"Kefir":[55,3,4.2,2.9,"W"],"Kiwi":[44,1.2,9.0,0.6,"I"],"Lamponi":[34,1.0,6.5,0.6,"I"],"Lardo":[891,0.0,0,99.0,"I"],"Lattarini":[145,14.6,0,9.6,"I"],"Latte, condensato zuccherato":[328,8.7,56.5,9.0,"I"],"Latte, di bufala":[114,4.5,5.1,8.5,"I"],"Latte, di capra":[76,3.9,4.7,4.8,"I"],"Latte, di pecora":[103,5.3,5.2,6.9,"I"],"Latte, di vacca UHT, intero":[63,3.3,4.7,3.6,"I"],"Latte, evaporato non zuccherato":[134,7.0,8.6,8.2,"I"],"Latte, in polvere, intero":[484,25.7,42.0,24.9,"I"],"Latte, in polvere, parz. scremato":[418,28.8,50.2,12.7,"I"],"Latte, in polvere, scremato":[351,33.1,56.2,0.9,"I"],"Latte, pastorizzato, intero":[64,3.3,4.9,3.6,"I"],"Latte, pastorizzato, parz. scremato":[46,3.5,5.0,1.5,"I"],"Latte, pastorizzato, scremato":[36,3.6,5.3,0.2,"I"],"Latte, UHT, parz. scremato":[46,3.2,5.1,1.6,"I"],"Latteria (formaggio, tipico del Veneto)":[456,30.7,1.4,36.4,"I"],"Lattuga":[19,1.8,2.2,0.4,"I"],"Lattuga a cappuccio":[19,1.5,3.0,0.2,"I"],"Lattuga da, taglio":[14,1.1,2.2,0.1,"I"],"Legumi cotti (media)":[100,7,15,0.6,"S"],"Lenti colorate, ripiene di cioccolato":[456,5.4,73.9,17.5,"I"],"Lenticchie, in scatola, scolate":[82,5.0,15.4,0.5,"I"],"Lenticchie, secche, cotte":[92,6.9,16.3,0.4,"I"],"Lenticchie, secche, crude":[291,22.7,51.1,1.0,"I"],"Lievito di birra, compresso":[56,12.1,1.1,0.4,"I"],"Limoni":[11,0.6,2.3,0,"I"],"Limoni, succo":[6,0.2,1.4,0,"I"],"Lingua di bovino, cruda":[232,17.1,0.4,18.0,"I"],"Litchi":[70,1.1,17.2,0.1,"I"],"Lombata":[134,21.8,0,5.2,"I"],"Loti o kaki":[65,0.6,16.0,0.3,"I"],"Lumaca":[67,12.9,0,1.7,"I"],"Lupini, ammollati":[114,16.4,7.1,2.4,"I"],"Macadamia":[735,8.0,5.1,76.0,"I"],"Maiale, leggero, bistecca cruda":[157,21.3,0,8.0,"I"],"Maiale, leggero, bistecca, cotta":[247,30.1,0,14.1,"I"],"Maiale, leggero, coscio":[110,20.2,0,3.2,"I"],"Maiale, leggero, lombo":[146,20.7,0,7.0,"I"],"Maiale, leggero, spalla":[133,19.0,0,6.3,"I"],"Maionese":[655,4.3,2.1,70.0,"I"],"Mais":[353,9.2,75.1,3.8,"I"],"Maltodestrine":[400,0,100,0,"W"],"Mandaranci":[53,0.8,12.8,0.2,"I"],"Mandarini":[72,0.9,17.6,0.3,"I"],"Manzo, tagli magri":[117,21.5,0,3.4,"I"],"Margarina, 100% vegetale":[760,0.6,0.4,84.0,"I"],"Marmellata":[222,0.5,58.7,0,"I"],"Marmellata, normali e tipo frutta viva":[222,0.5,58.7,0,"I"],"Mascarpone":[455,7.6,0.3,47.0,"I"],"Melagrane":[63,0.5,15.9,0.2,"I"],"Melanzane, cotte":[41,3.8,3.4,1.4,"I"],"Melanzane, crude":[18,1.1,2.6,0.4,"I"],"Mele cotogne":[26,0.3,6.3,0.1,"I"],"Mele, disidratate":[369,1.3,92.2,2.0,"I"],"Mele, fresche, senza buccia":[53,0.3,13.7,0.1,"I"],"Melone d’estate":[33,0.8,7.4,0.2,"I"],"Melone d’inverno":[22,0.5,4.9,0.2,"I"],"Melù o pesce, molo, fresco":[72,17.4,0,0.3,"I"],"Melù, ammollato":[92,20.7,0.3,0.9,"I"],"Melù, stoccafisso, secco":[356,80.1,1.1,3.5,"I"],"Menta":[41,3.8,5.3,0.7,"I"],"Merendine, con marmellata":[358,5.5,69.6,8.3,"I"],"Merendine, farcite di latte":[413,6.2,67.3,15.1,"I"],"Merendine, tipo brioche":[438,8.2,65.7,17.6,"I"],"Merendine, tipo pan di Spagna":[383,7.4,62.7,13.1,"I"],"Merendine, tipo pasta frolla":[444,5.3,71.7,17.1,"I"],"Merluzzo":[71,17.0,0,0.3,"I"],"Merluzzo o baccalà ammollato":[95,21.6,0,1.0,"I"],"Merluzzo o baccalà secco":[131,29.0,0,1.7,"I"],"Merluzzo o bastoncini di pesce surgelati":[191,11.0,15.0,10.1,"I"],"Merluzzo o cotto":[92,20.9,0,0.9,"I"],"Merluzzo o nasello, fresco":[71,17.0,0,0.3,"I"],"Merluzzo o surgelato":[75,17.3,0,0.6,"I"],"Merluzzo o surgelato, cotto":[107,24.8,0,0.9,"I"],"Merluzzo o surgelato, filetti":[68,15.6,0,0.6,"I"],"Miele":[304,0.6,80.3,0,"I"],"Miglio decorticato":[356,11,73,4,"S"],"Miglio, intero":[356,11.8,72.9,3.9,"I"],"Milza di bovino":[107,18.5,0,3.7,"I"],"Minestre in, crema di cipolle":[26,2.2,2.2,1.0,"I"],"Minestre in, crema di funghi":[56,1.0,4.2,4.0,"I"],"Minestre in, crema di pollo":[58,1.7,4.5,3.8,"I"],"Minestre in, crema di pomodori":[36,0.8,6.4,1.0,"I"],"Minestre in, scatola, crema di asparagi":[26,1.0,4.2,0.7,"I"],"Minestrone":[147,10.0,14.0,6.0,"I"],"Minestrone, liofilizzato":[298,10.1,47.6,8.8,"I"],"Mirtilli":[25,0.9,5.1,0.2,"I"],"Mix di frutta secca":[567,13,24,45,"W"],"Mora di rovo":[36,1.3,8.1,0,"I"],"Mormora":[97,18.0,2.0,1.9,"I"],"Mortadella, di bovino e suino":[388,13.3,0.5,37.0,"I"],"Mortadella, solo suino":[317,14.7,1.5,28.1,"I"],"Mozzarella light":[160,19,1.5,9,"S"],"Mozzarella, di bufala":[288,16.7,0.4,24.4,"I"],"Mozzarella, di vacca":[253,18.7,0.7,19.5,"I"],"Muesli":[364,9.7,72.2,6.0,"I"],"Nasello, crudo":[71,17.0,0,0.3,"I"],"Nespole":[28,0.4,6.1,0.4,"I"],"Nocciola in, vaschetta":[183,3.3,25.2,8.4,"I"],"Nocciole, secche":[655,13.8,6.1,64.1,"I"],"Noce":[106,21.3,0,2.3,"I"],"Noci pecan":[705,7.2,7.9,71.8,"I"],"Noci, fresche":[582,10.5,5.5,57.7,"I"],"Noci, secche":[689,14.3,5.1,68.1,"I"],"Nutella":[539,6.3,57.5,30.9,"S"],"NutRicotta":[75,12,3.5,1.5,"S"],"Oca":[373,15.8,0,34.4,"I"],"Occhiata":[117,19.0,2.0,3.7,"I"],"Olii vegetali:, oliva, soia, mais ecc.":[899,0.0,0,99.9,"I"],"Olio":[899,0.0,0,99.9,"I"],"Olio extravergine di oliva":[899,0.0,0,99.9,"I"],"Olio, arachide":[899,0.0,0,99.9,"I"],"Olio, girasole":[899,0.0,0,99.9,"I"],"Olio, mais":[899,0.0,0,99.9,"I"],"Olio, mandorle dolci":[899,0.0,0,99.9,"I"],"Olio, oliva extra vergine":[899,0.0,0,99.9,"I"],"Olio, palma":[899,0.0,0,99.9,"I"],"Olio, sesamo":[899,0.0,0,99.9,"I"],"Olio, soia":[899,0.0,0,99.9,"I"],"Olio, vinacciolo":[899,0.0,0,99.9,"I"],"Olive, da tavola conservate":[268,1.5,5.0,27.0,"I"],"Olive, nere":[235,1.6,0.8,25.1,"I"],"Olive, verdi":[142,0.8,1.0,15.0,"I"],"Olive, verdi in salamoia":[108,1.2,1.0,11.0,"I"],"Orata, d’allevamento":[159,19.7,1.2,8.4,"I"],"Orata, fresca, filetti, selvatica":[121,20.7,1.0,3.8,"I"],"Orata, surgelata":[94,19.8,1.0,1.2,"I"],"Orzo perlato":[319,10.4,70.5,1.4,"I"],"Ostrica":[69,10.2,5.4,0.9,"I"],"Pagello":[101,21.0,0,1.9,"I"],"Pagello bocca, d’oro":[118,20.0,3.0,3.0,"I"],"Palombo":[80,16.0,1.3,1.2,"I"],"Pancetta magretta":[315,21.7,0,25.3,"I"],"Pancetta tesa":[337,20.9,0,28.1,"I"],"Pancia, biancostato, punta di petto":[171,19.7,0,10.2,"I"],"Pane di segale":[219,8.3,45.4,1.7,"I"],"Pane integrale":[224,7.5,48.5,1.3,"I"],"Pane, al malto":[267,8.3,56.6,2.4,"I"],"Pane, azzimo":[377,10.7,87.1,0.8,"I"],"Pane, formato rosetta":[269,9.0,57.6,1.9,"I"],"Pane, segale":[219,8.3,45.4,1.7,"I"],"Pane, tipo 0":[275,8.1,63.5,0.5,"I"],"Pane, tipo 00":[289,8.6,66.9,0.4,"I"],"Pane, tipo 1":[265,8.9,59.7,0.6,"I"],"Pane, tipo integrale":[224,7.5,48.5,1.3,"I"],"Panettone":[333,6.4,56.2,10.7,"I"],"Pangrattato":[351,10.1,77.8,2.1,"I"],"Panini, al latte":[295,9.0,48.2,8.7,"I"],"Panini, all’olio":[299,7.7,57.5,5.8,"I"],"Panna in vaschetta":[189,3.2,27.2,8.2,"I"],"Panna ricoperta, di cioccolato fondente":[316,4.5,28.2,21.4,"I"],"Panna, o crema di latte":[337,2.3,3.4,35.0,"I"],"Papaia":[28,0.4,6.9,0.1,"I"],"Parmigiano":[387,33.5,0,28.1,"I"],"Passiflora":[36,3.0,5.7,0.3,"I"],"Pasta all’uovo, secca, cotta":[122,4.3,25.9,0.8,"I"],"Pasta di mandorle":[455,9.9,54.6,23.4,"I"],"Pasta di semola (secca)":[359,13,72,1.5,"S"],"Pasta di semola, cotta":[137,4.7,30.3,0.5,"I"],"Pasta di semola, cruda":[353,10.9,79.1,1.4,"I"],"Pasta integrale (secca)":[345,13.5,66,2.5,"S"],"Pasta, all’uovo, secca, cruda":[366,13.0,77.9,2.4,"I"],"Patate dolci, crude":[86,1.6,20,0.1,"S"],"Patate novelle, crude":[70,2.0,15.7,0.3,"I"],"Patate, cotte con buccia":[85,2.1,17.9,1.0,"I"],"Patate, cotte senza buccia":[71,1.8,16.9,0.1,"I"],"Patate, cotte, arrosto":[148,2.9,25.7,4.5,"I"],"Patate, cotte, fritte":[188,3.9,29.9,6.7,"I"],"Patate, crude":[85,2.1,17.9,1.0,"I"],"Patate, microonde":[85,2.1,17.9,1.0,"I"],"Patatine fritte, in busta":[507,5.4,58.5,29.6,"I"],"Patè, di coniglio":[346,13.0,1.1,32.2,"I"],"Patè, di fegato":[341,12.7,1.3,31.7,"I"],"Patè, di pollo":[289,11.1,2.3,26.2,"I"],"Patè, di prosciutto":[358,11.3,1.1,34.3,"I"],"Pecorino":[392,25.8,0.2,32.0,"I"],"Pecorino romano":[409,26.0,1.8,33.1,"I"],"Pecorino siciliano":[427,28.9,2.4,33.6,"I"],"Peperoncini, piccanti":[26,1.8,3.8,0.5,"I"],"Peperoni, cotti":[125,5.2,24.3,1.5,"I"],"Peperoni, crudi":[22,0.9,4.2,0.3,"I"],"Peperoni, gialli crudi":[31,0.9,6.8,0.2,"I"],"Peperoni, rossi e gialli":[31,0.9,6.7,0.3,"I"],"Peperoni, verdi":[27,0.7,6.0,0.2,"I"],"Pere, candite":[295,1.3,75.9,0.6,"I"],"Pere, fresche senza buccia":[35,0.3,8.8,0.1,"I"],"Pesante, coscio":[128,20.4,0,5.1,"I"],"Pesante, lombo":[172,20.8,0,9.9,"I"],"Pesante, spalla":[156,19.0,0,8.9,"I"],"Pesce gatto":[92,15.5,0.2,3.3,"I"],"Pesce persico":[91,19,0.5,1.2,"S"],"Pesche, con buccia":[25,0.7,5.8,0,"I"],"Pesche, disidratate":[357,4.8,88.0,0.9,"I"],"Pesche, sciroppate":[55,0.5,14.0,0,"I"],"Pesche, secche":[275,3.1,68.3,0.7,"I"],"Pesche, senza buccia":[27,0.8,6.1,0.1,"I"],"Philadelphia Light":[148,7.4,5.2,11,"W"],"Piadina romagnola":[289,7,47,7.8,"W"],"Piccione, giovane":[138,22.1,0,5.5,"I"],"Pinoli":[595,31.9,4.0,50.3,"I"],"Piselli, freschi":[91,9.7,11.5,1.0,"I"],"Piselli, freschi, crudi":[52,5.5,6.5,0.6,"I"],"Piselli, in scatola, scolati":[68,5.3,11.1,0.6,"I"],"Piselli, secchi":[286,21.7,48.2,2.0,"I"],"Piselli, surgelati":[48,5.4,6.4,0.3,"I"],"Pistacchi":[608,18.1,8.1,56.1,"I"],"Pizza margherita":[275,9.6,46.3,5.3,"W"],"Pizza, bianca":[302,7.9,57.9,5.9,"I"],"Pollo, ala con, cotta":[283,31.7,0,17.4,"I"],"Pollo, ala con, pelle, cruda":[196,16.7,0,14.3,"I"],"Pollo, fuso":[175,29.9,0,6.2,"I"],"Pollo, fuso, con pelle, crudo":[125,18.4,0,5.7,"I"],"Pollo, fuso, cotto":[201,31.2,0,8.5,"I"],"Pollo, fuso, senza pelle crudo":[107,18.5,0,3.7,"I"],"Pollo, intero":[200,27.1,0,10.2,"I"],"Pollo, intero, con pelle, crudo":[171,19.0,0,10.6,"I"],"Pollo, intero, cotto":[246,28.3,0,14.7,"I"],"Pollo, intero, senza pelle crudo":[110,19.4,0,3.6,"I"],"Pollo, petto, cotto":[129,30.2,0,0.9,"I"],"Pollo, petto, crudo":[100,23.3,0,0.8,"I"],"Pollo, sovracoscio, con pelle crudo":[196,17.4,0,14.0,"I"],"Pollo, sovracoscio, cotto":[219,26.7,0,12.5,"I"],"Pollo, sovracoscio, senza pelle crudo":[132,18.7,0,6.3,"I"],"Polmone di, bovino":[75,14.0,0,2.1,"I"],"Polpo":[57,10.6,1.4,1.0,"I"],"Pomodori, conserva":[96,3.9,20.4,0.4,"I"],"Pomodori, da insalata":[17,1.2,2.8,0.2,"I"],"Pomodori, maturi":[19,1.0,3.5,0.2,"I"],"Pomodori, passata":[18,1.3,3.0,0.2,"I"],"Pomodori, pelati in scatola, frutti e succo":[21,1.2,3.0,0.5,"I"],"Pomodori, San Marzano":[17,1.1,3.0,0.2,"I"],"Pompelmo":[26,0.6,6.2,0,"I"],"Porri, cotti":[33,2.4,5.9,0.1,"I"],"Porri, crudi":[29,2.1,5.2,0.1,"I"],"Prezzemolo":[20,3.7,0,0.6,"I"],"Prosciutto, cotto":[215,19.8,0.9,14.7,"I"],"Prosciutto, crudo San Daniele":[320,28.3,0,23.0,"I"],"Prosciutto, di montagna":[303,26.2,0,22.0,"I"],"Prosciutto, di Parma":[268,25.5,0,18.4,"I"],"Prosciutto, di Parma, magro":[145,27.5,0,3.9,"I"],"Prosciutto, disossato":[224,26.9,0,12.9,"I"],"Prosciutto, disossato, magro":[159,29.3,0,4.6,"I"],"Prosciutto, gambuccio":[306,26.2,0,22.4,"I"],"Prosciutto, magro":[132,22.2,1.0,4.4,"I"],"Prosciutto, San Daniele":[136,26.8,0,3.2,"I"],"Proteine del siero isolate":[370,88,2,1,"S"],"Provolone":[374,28.1,2.0,28.2,"I"],"Prugne, fresche":[42,0.5,10.5,0.1,"I"],"Prugne, gialle":[30,0.5,7.2,0.1,"I"],"Prugne, rosse":[42,0.5,10.5,0.1,"I"],"Prugne, secche":[220,2.2,55.0,0.5,"I"],"Quaglia":[161,25.0,0,6.8,"I"],"Quinoa":[368,14,64,6,"S"],"Radicchio, rosso":[13,1.4,1.6,0.1,"I"],"Radicchio, verde":[14,1.9,0.5,0.5,"I"],"Rana":[64,15.5,0,0.2,"I"],"Rape":[36,1.9,7.5,0,"I"],"Rape, crude":[18,1.0,3.8,0,"I"],"Ravanelli":[11,0.8,1.8,0.1,"I"],"Razza":[68,14.2,0.7,0.9,"I"],"Rene, di bovino":[118,18.4,0.8,4.6,"I"],"Ribes":[28,0.9,6.6,0,"I"],"Ricotta, di bufala":[212,10.5,3.7,17.3,"I"],"Ricotta, di pecora":[157,9.5,4.2,11.5,"I"],"Ricotta, di vacca":[146,8.8,3.5,10.9,"I"],"Riso basmati, crudo":[358,8.6,78,1.1,"W"],"Riso integrale, crudo":[337,7.5,77.4,1.9,"I"],"Riso, bollito":[97,2.1,23.3,0.1,"I"],"Riso, brillato, crudo":[332,6.7,80.4,0.4,"I"],"Riso, cotto":[100,2.0,24.2,0.1,"I"],"Riso, crudo":[111,2.5,25.5,0.6,"I"],"Riso, integrale, crudo":[337,7.5,77.4,1.9,"I"],"Riso, parboiled, crudo":[337,7.4,81.3,0.3,"I"],"Riso, soffiato, da prima colazione":[352,6.0,85.0,1.0,"I"],"Robiola":[338,20.0,2.3,27.7,"I"],"Rombo":[81,16.3,1.2,1.3,"I"],"Rosmarino":[96,1.4,13.5,4.4,"I"],"Rughetta o rucola":[28,2.6,3.9,0.3,"I"],"Salame, Brianza":[384,26.5,1.0,30.5,"I"],"Salame, Cacciatore":[425,28.5,1.2,34.0,"I"],"Salame, Fabriano":[420,26.5,1.5,34.3,"I"],"Salame, Felino":[375,30.5,0.5,27.9,"I"],"Salame, Milano":[392,26.7,1.5,31.1,"I"],"Salame, Napoli":[359,26.7,1.7,27.3,"I"],"Salame, Nostrano":[370,27.3,1.1,28.5,"I"],"Salame, Ungherese":[405,24.2,0.7,34.0,"I"],"Sale da cucina":[0,0,0,0,"S"],"Salmone affumicato":[117,18.3,0,4.3,"W"],"Salmone, affumicato":[147,25.4,1.2,4.5,"I"],"Salmone, fresco":[185,18.4,1.0,12.0,"I"],"Salmone, in salamoia":[192,21.1,1.0,11.5,"I"],"Salpa":[104,18.0,2.0,2.7,"I"],"Salsa tomato, ketchup":[98,2.1,24.0,0,"I"],"Salsiccia, cotta":[324,22.2,0,26.1,"I"],"Salsiccia, di fegato":[424,12.4,0.9,41.2,"I"],"Salsiccia, di suino, fresca cruda":[304,15.4,0.6,26.7,"I"],"Salsiccia, di suino, secca":[514,22.0,0,47.3,"I"],"Salvia":[116,3.9,15.6,4.6,"I"],"Sarda, fresca":[129,20.8,1.5,4.5,"I"],"Savoiardi":[391,11.9,69.6,9.2,"I"],"Scamone":[119,21.4,0,3.7,"I"],"Scamorza":[334,25.0,1.0,25.6,"I"],"Scorfano":[82,19.0,0.6,0.4,"I"],"Seccati, al forno e mandorlati":[277,5.2,58.2,4.2,"I"],"Secchi":[256,3.5,58.0,2.7,"I"],"Sedano rapa":[23,1.9,3.8,0.1,"I"],"Sedano, crudo":[20,2.3,2.4,0.2,"I"],"Sego di bue":[872,0.8,0,96.5,"I"],"Seitan":[121,21,4,2,"S"],"Semola":[339,11.5,76.9,0.5,"I"],"Seppia":[72,14.0,0.7,1.5,"I"],"Sgombro o in salamoia":[177,19.3,0,11.1,"I"],"Sgombro o maccarello, fresco":[170,17.0,0.5,11.1,"I"],"Skyr bianco 0%":[51,9,3.4,0.1,"W"],"Sogliola":[83,16.9,0.8,1.4,"I"],"Sogliola, fresca":[83,16.9,0.8,1.4,"I"],"Sogliola, surgelata":[81,17.3,0.1,1.3,"I"],"Soia, isolato proteico":[369,86.5,4.5,0.7,"I"],"Soia, latte":[32,2.9,0.8,1.9,"I"],"Soia, salsa":[66,8.7,8.3,0,"I"],"Soia, secca":[407,36.9,23.2,19.1,"I"],"Soia, yogurt":[72,5.0,3.9,4.2,"I"],"Sorbetto al, limone in vaschetta":[132,0.9,34.2,0,"I"],"Sottofesa":[111,22.0,0,2.6,"I"],"Sottofesa, fesone)":[108,21.5,0,2.4,"I"],"Sott’olio, sgocciolato":[192,25.2,0,10.1,"I"],"Speck":[303,28.3,0.5,20.9,"I"],"Spigola":[82,16.5,0.6,1.5,"I"],"Spigola, d’allevamento, filetti":[149,21.3,0.8,6.8,"I"],"Spinaci, cotti":[63,6.3,7.0,1.3,"I"],"Spinaci, crudi":[31,3.4,2.9,0.7,"I"],"Spinaci, surgelati":[23,2.8,3.0,0,"I"],"Storione":[145,19.2,0,7.6,"I"],"Storione, uova, (caviale)":[255,26.9,3.3,15.0,"I"],"Stracchino":[300,18.5,0,25.1,"I"],"Stracciatella, in vaschetta":[193,2.9,31.5,7.0,"I"],"Strutto o sugna":[892,0.3,0,99.0,"I"],"Struzzo, cotto":[101,22.2,0,1.4,"I"],"Struzzo, crudo":[92,20.9,0,0.9,"I"],"Succo di frutta, (albicocca e pera)":[56,0.3,14.5,0.1,"I"],"Suro o sugarello":[104,18.3,1.0,3.0,"I"],"Sushi (misto)":[143,4,30,0.5,"W"],"Tacchino":[191,26.7,0,9.3,"I"],"Tacchino, cotta":[131,29.6,0,1.4,"I"],"Tacchino, cotto":[190,28.0,0,8.7,"I"],"Tacchino, fesa cruda":[107,24.0,0,1.2,"I"],"Tacchino, fuso, con pelle crudo":[126,17.9,0,6.0,"I"],"Tacchino, intero, con pelle, crudo":[135,18.2,0,6.9,"I"],"Tacchino, senza pelle crudo":[113,18.0,0,4.6,"I"],"Tacchino, senza pelle, crudo":[109,21.9,0,2.4,"I"],"Tacchino, sovracoscio, cotto":[182,30.2,0,6.8,"I"],"Tacchino, sovracoscio, senza pelle crudo":[120,18.5,0,5.1,"I"],"Taleggio":[315,19.0,0.9,26.2,"I"],"Tarassaco, o dente di leone":[36,3.1,3.7,1.1,"I"],"Tartufo nero":[31,6.0,0.7,0.5,"I"],"Tinca":[79,17.9,0.9,0.5,"I"],"Tofu":[121,14.1,1.6,7,"W"],"Tonno al naturale, sgocciolato":[110,25,0,1,"S"],"Tonno sott’olio, sgocciolato":[192,25,0,10,"S"],"Torrone alla, mandorla":[479,10.8,52.0,26.8,"I"],"Torta margherita":[367,8.9,63.4,10.4,"I"],"Tortellini, freschi":[300,12.2,49.9,7.1,"I"],"Tortellini, secchi":[376,15.7,57.6,10.8,"I"],"Triglia":[123,15.8,1.1,6.2,"I"],"Trippa di bovino":[108,15.8,0,5.0,"I"],"Trota":[86,14.7,0,3.0,"I"],"Trota iridea, cotta al forno":[105,20.4,0,2.6,"I"],"Trota iridea, cotta al microonde":[136,26.7,0,3.2,"I"],"Trota iridea, d’allevamento, filetti":[118,20.3,0,4.1,"I"],"Trota iridea, surgelata":[92,17.8,0,2.3,"I"],"Tè, in foglie":[108,19.6,3.0,2.0,"I"],"Uova di anatra, intero":[190,12.2,0.7,15.4,"I"],"Uova di gallina, albume":[43,10.7,0,0,"I"],"Uova di gallina, intero":[128,12.4,0,8.7,"I"],"Uova di gallina, intero, congelato":[128,12.4,0,8.7,"I"],"Uova di gallina, intero, cotto":[128,12.4,0,8.7,"I"],"Uova di gallina, intero, in polvere":[537,51.9,0.4,36.4,"I"],"Uova di gallina, tuorlo":[325,15.8,0,29.1,"I"],"Uova di gallina, tuorlo, congelato":[325,15.8,0,29.1,"I"],"Uova di oca, intero":[189,13.8,1.0,14.4,"I"],"Uova di tacchina, intero":[147,12.8,1.0,10.2,"I"],"Uovo intero":[128,12.4,0,8.7,"I"],"Uva, secca":[283,1.9,72.0,0.6,"I"],"Uva, succo, in cartone":[66,0.3,17.3,0,"I"],"Vaniglia in, vaschetta":[167,2.7,25.7,6.7,"I"],"Verdura cruda (media)":[25,1.5,4,0.3,"S"],"Vitello macinato, crudo":[140,20,0,6.5,"S"],"Vitello, filetto, cotto":[258,38.6,0,11.5,"I"],"Vitello, filetto, crudo":[107,20.7,0,2.7,"I"],"Vongola":[72,10.2,2.2,2.5,"I"],"Wafer, ricoperto, di cioccolato":[498,8.2,60.3,26.6,"I"],"Würstel, cotto":[313,16.4,1.3,26.9,"I"],"Würstel, crudo":[270,13.7,1.4,23.3,"I"],"Yogurt caprino":[60,3.6,5.1,2.9,"I"],"Yogurt greco 0% bianco Esselunga":[55,10,3.5,0.2,"S"],"Zampone, confezionato precotto":[361,19.1,0,31.6,"I"],"Zampone, confezionato precotto, cotto":[319,21.4,0,25.9,"I"],"Zucca gialla":[18,1.1,3.5,0.1,"I"],"Zucchero (saccarosio)":[392,0.0,104.5,0,"I"],"Zucchine, chiare, crude":[11,1.3,1.4,0.1,"I"],"Zucchine, cotte":[27,3.2,3.4,0.2,"I"],"Zucchine, crude":[11,1.3,1.4,0.1,"I"],"Zucchine, scure, crude":[11,1.3,1.4,0.1,"I"],"“ “, annurche":[40,0.3,10.2,0.1,"I"],"“ “, con buccia":[38,0.2,10.0,0,"I"],"“ “, deliziose":[43,0.2,11.1,0.1,"I"],"“ “, golden":[43,0.4,10.7,0.1,"I"],"“ “, granny smith":[38,0.5,9.4,0.1,"I"],"“ “, imperatore":[44,0.2,11.3,0.1,"I"],"“ “, renette":[40,0.3,10.0,0.1,"I"]};
+const PLAN=[{"k":"colazione","t":"07:00","n":"Colazione","g":[{"n":"Proteine","o":[["Proteine del siero isolate",15],["Tacchino, fesa cruda",50],["Albume d’uovo",150],["Yogurt greco 0% bianco Esselunga",150],["NutRicotta",100]]},{"n":"Carboidrati","o":[["Fette biscottate integrali",64],["Fette Wasa integrali",70],["Fiocchi d’avena",60],["Muesli",60],["Pane di segale",100],["Biscotti Oro Saiwa",55],["Biscotti Plasmon",55]]},{"n":"Dolce","o":[["Marmellata",20],["Miele",20]]},{"n":"Grassi","o":[["Burro di arachidi",10],["Cioccolato fondente 90%",10],["Frutta secca (media)",10]]}]},{"k":"spuntino","t":"10:00","n":"Spuntino mattina","g":[{"n":"Proteine","o":[["Proteine del siero isolate",25]]},{"n":"Frutta","o":[["Frutta fresca (media)",150]]},{"n":"Frutta secca","o":[["Frutta secca (media)",20]]}]},{"k":"pranzo","t":"12:00","n":"Pranzo","g":[{"n":"Primo","o":[["Couscous Barilla",180],["Farro",180],["Miglio decorticato",180],["Orzo perlato",200],["Pane integrale",270],["Pasta di semola (secca)",180],["Pasta integrale (secca)",180],["Patate, crude",720],["Patate dolci, crude",720],["Quinoa",180],["Riso integrale, crudo",180],["Gnocchi freschi di patate Esselunga",360]]},{"n":"Secondo","o":[["Calamaro",340],["Cernia, surgelata",260],["Gamberetti surgelati",340],["Manzo, tagli magri",160],["Merluzzo",280],["Nasello, crudo",280],["Orata, surgelata",240],["Palombo",260],["Pesce persico",280],["Pollo, petto, crudo",200],["Rombo",260],["Salmone, fresco",120],["Scorfano",260],["Seitan",140],["Seppia",280],["Sogliola",240],["Spigola",260],["Polpo",400],["Tacchino, fesa cruda",200],["Tonno al naturale, sgocciolato",220],["Albume d’uovo",440],["Vitello macinato, crudo",200],["Bresaola",140],["Mozzarella light",125],["Legumi cotti (media)",150]]},{"n":"Condimento","o":[["Olio extravergine di oliva",18]]},{"n":"Verdura","o":[["Verdura cruda (media)",200]]}]},{"k":"pre","t":"16:30","n":"Pre allenamento","g":[{"n":"Yogurt","o":[["Yogurt greco 0% bianco Esselunga",150]]},{"n":"Carboidrati","o":[["Crackers senza grassi",60],["Fette Wasa integrali",65],["Gallette di riso",55],["Fiocchi d’avena",65],["Muesli",60]]},{"n":"Frutta","o":[["Frutta fresca (media)",150]]},{"n":"Dolce","o":[["Marmellata",20],["Miele",20]]}]},{"k":"intra","t":"18:00","n":"Intra allenamento","g":[{"n":"Maltodestrine","o":[["Maltodestrine",30]]},{"n":"EAA","o":[["Aminoacidi essenziali (EAA)",9]]},{"n":"Creatina","o":[["Creatina monoidrato",5]]},{"n":"Sale","o":[["Sale da cucina",1]]}]},{"k":"cena","t":"22:00","n":"Cena","g":[{"n":"Primo","o":[["Couscous Barilla",250],["Farro",250],["Miglio decorticato",250],["Orzo perlato",275],["Pane integrale",375],["Pasta di semola (secca)",250],["Pasta integrale (secca)",250],["Patate, crude",1000],["Patate dolci, crude",1000],["Quinoa",250],["Riso integrale, crudo",250],["Gnocchi freschi di patate Esselunga",500]]},{"n":"Secondo","o":[["Calamaro",250],["Cernia, surgelata",200],["Gamberetti surgelati",250],["Manzo, tagli magri",120],["Merluzzo",210],["Nasello, crudo",210],["Orata, surgelata",180],["Palombo",200],["Pesce persico",210],["Pollo, petto, crudo",150],["Rombo",200],["Salmone, fresco",90],["Scorfano",200],["Seitan",100],["Seppia",210],["Sogliola",180],["Spigola",200],["Polpo",300],["Tacchino, fesa cruda",150],["Tonno al naturale, sgocciolato",165],["Albume d’uovo",330],["Vitello macinato, crudo",150],["Bresaola",100],["Mozzarella light",100],["Legumi cotti (media)",120]]},{"n":"Condimento","o":[["Olio extravergine di oliva",18]]},{"n":"Verdura","o":[["Verdura cruda (media)",200]]},{"n":"Extra","o":[["Grana",15],["Uovo intero",50]]}]}];
+
+(() => {
+"use strict";
+/* ============ utilità ============ */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2, "0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+const today = () => iso(new Date());
+const diffDays = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const num = v => { if (v === "" || v == null) return null; const n = Number(String(v).replace(",", ".")); return Number.isFinite(n) ? n : null; };
+const fmt = (v, d = 1) => v == null || !Number.isFinite(v) ? "–" : Number(v).toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d });
+const int = v => v == null ? "–" : Math.round(v).toLocaleString("it-IT");
+const longDate = s => parse(s).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
+const dayName = s => parse(s).toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long" });
+const shortDate = s => parse(s).toLocaleDateString("it-IT", { day: "numeric", month: "short" });
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const clone = o => JSON.parse(JSON.stringify(o));
+const toast = msg => { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 2400); };
+const IC = {
+  barcode: '<svg viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M10 6v12M14 6v12M17 6v12M20 6v12"/></svg>',
+  camera: '<svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>',
+  pen: '<svg viewBox="0 0 24 24"><path d="M5 19h14M7 15l9-9 3 3-9 9H7z"/></svg>',
+  globe: '<svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
+  plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  edit: '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg>',
+  trash: '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>',
+  info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  check: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>',
+  book: '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',
+  dl: '<svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',
+  plan: '<svg viewBox="0 0 24 24"><path d="M9 5h10M9 12h10M9 19h10M4 5h.5M4 12h.5M4 19h.5"/></svg>',
+  close: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"><path d="M9 6l6 6-6 6"/></svg>',
+  moon: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>',
+  body: '<svg viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2"/><path d="M5 9h14M12 9v6M9 21l3-6 3 6"/></svg>',
+  ball: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9.5" ry="6" transform="rotate(-35 12 12)"/><path d="M8.5 15.5l7-7M10 11l3 3M11.5 9.5l3 3"/></svg>',
+  load: '<svg viewBox="0 0 24 24"><path d="M3 20h18M6 16v-5M11 16V6M16 16v-8M21 16v-3"/></svg>',
+  apple: '<svg viewBox="0 0 24 24"><path d="M12 7c-2-2-7-1.5-7 4 0 4 3 9 5 9 1 0 1.3-.5 2-.5s1 .5 2 .5c2 0 5-5 5-9 0-5.5-5-6-7-4zM12 7c0-2 1-3.5 3-4"/></svg>',
+  target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  day: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18M8 15h3"/></svg>'
+};
+
+/* ============ dati statici ============ */
+const MEALS = PLAN.map(m => ({ k: m.k, t: m.t, n: m.n })).concat([{ k: "extra", t: "", n: "Fuori piano" }]);
+const MEAL_BY = Object.fromEntries(MEALS.map(m => [m.k, m]));
+const WELL = [["fatica", "Fatica", "1 sfinito · 5 fresco"], ["sonno", "Qualità sonno", "1 pessima · 5 ottima"], ["dolori", "Dolori muscolari", "1 molto · 5 nessuno"], ["stress", "Stress", "1 alto · 5 rilassato"], ["umore", "Umore", "1 giù · 5 ottimo"]];
+const DEF_PROFILE = { pesoTarget: null, pesoData: "", kcal: 3614, p: 197, c: 520, l: 78, sonno: 7, acqua: 3, altezza: 188 };
+/* parametri BIA: chiave, etichetta, unità, decimali, riferimento [min, okMin, okMax, max] dal referto Bodygram */
+const BIA = [
+  ["pha", "Angolo di fase", "°", 1, [4.9, 6.5, 8.1, 9.7]],
+  ["fmPct", "Massa grassa", "%", 1, [9.3, 13.1, 18.7, 24.4], "fm", "kg"],
+  ["ffmPct", "Massa magra", "%", 1, [75.6, 81.3, 86.9, 90.7], "ffm", "kg"],
+  ["tbwPct", "Acqua totale", "%", 1, [49, 55, 64, 71], "tbw", "L"],
+  ["ecwPct", "Acqua extracellulare", "% TBW", 1, [20, 38, 45, 65], "ecw", "L"],
+  ["icwPct", "Acqua intracellulare", "% TBW", 1, [35, 55, 62, 80], "icw", "L"],
+  ["bcmPct", "Massa cellulare", "% FFM", 1, [25, 50, 60, 70], "bcm", "kg"],
+  ["smmPct", "Massa muscolo-scheletrica", "%", 1, [29.1, 37.9, 46.7, 55.5], "smm", "kg"],
+  ["asmm", "Massa muscolare appendicolare", "kg", 1, [16.9, 25.3, 31.1, 39.5]],
+  ["mm", "Massa muscolare totale", "kg", 1, "wide"],
+  ["bmr", "Metabolismo basale", "kcal", 0, null],
+  ["tdee", "Dispendio giornaliero", "kcal", 0, null]
+];
+const BIA_INFO = {
+  pha: "Indica l'integrità delle membrane cellulari e la quantità di cellule sane (arcotangente Xc/Rz). Più alto è, meglio stanno le cellule: negli atleti allenati è spesso 7–9°.",
+  fmPct: "Quota del peso fatta di tessuto adiposo, cioè la riserva di energia. La BIA la ricava per differenza: peso meno massa magra.",
+  ffmPct: "Tutto ciò che non è grasso: muscoli, ossa, organi e acqua. Circa il 73% della massa magra è acqua.",
+  tbwPct: "Tutta l'acqua del corpo, dentro e fuori dalle cellule. È ciò che la BIA misura più direttamente: da qui stima le altre masse.",
+  ecwPct: "Acqua fuori dalle cellule (plasma e liquido interstiziale). Se cresce in proporzione può indicare ritenzione o infiammazione, per esempio dopo traumi o settimane molto intense.",
+  icwPct: "Acqua dentro le cellule, soprattutto quelle muscolari. Sale con l'aumento del muscolo e con una buona idratazione cellulare.",
+  bcmPct: "Massa cellulare attiva: la parte della massa magra che consuma energia (cellule di muscoli e organi). È collegata all'angolo di fase.",
+  smmPct: "Il muscolo attaccato allo scheletro, quello che alleni e che produce forza e movimento.",
+  asmm: "Il muscolo di braccia e gambe. Diviso per l'altezza al quadrato (ASMI) si usa per valutare la sarcopenia.",
+  mm: "Tutto il muscolo del corpo: scheletrico più quello liscio (visceri) e cardiaco.",
+  bmr: "Le calorie che spendi a riposo assoluto per le funzioni vitali. Il software lo stima dalla massa cellulare.",
+  tdee: "Stima delle calorie totali del giorno: basale moltiplicato per il livello di attività. Nei periodi di carico alto di un rugbista tende a sottostimare."
+};
+
+/* ============ stato e archivio ============ */
+const COLS = ["giorni", "pesate", "bia", "partite", "alimenti", "abituali"];
+const S = { giorni: {}, pesate: {}, bia: {}, partite: {}, alimenti: {}, abituali: {}, profilo: { ...DEF_PROFILE },
+  tab: "home", sub: "menu", date: today(), wRange: 30, biaSel: null, biaCmp: "", editMatch: null, editPeso: null, ready: false };
+let db = null, dl = null;
+const SRC = { I: "INRAN", S: "valori medi da etichetta", W: "cercato online (fatsecret)", P: "tuo alimento" };
+const srcLabel = (s, own) => s === "P" && own && own.fonte ? "tuo · " + own.fonte : SRC[s] || "INRAN";
+const LS = "loackkainn-v2";
+function loadLocal() { try { const o = JSON.parse(localStorage.getItem(LS) || "{}"); COLS.forEach(c => { if (o[c]) S[c] = o[c]; }); if (o.profilo) S.profilo = { ...DEF_PROFILE, ...o.profilo }; } catch (e) {} }
+function saveLocal() { try { const o = { profilo: S.profilo }; COLS.forEach(c => o[c] = S[c]); localStorage.setItem(LS, JSON.stringify(o)); } catch (e) {} }
+async function put(col, id, data) { S[col][id] = data; if (db) await db.doc(col + "/" + id).set(clone(data)); else saveLocal(); }
+async function del(col, id) { delete S[col][id]; if (db) await db.doc(col + "/" + id).delete(); else saveLocal(); }
+async function putProfile(p) { S.profilo = p; if (db) await db.doc("profilo/main").set(clone(p)); else saveLocal(); }
+const safe = async (fn, ok) => { try { await fn(); if (ok) toast(ok); return true; } catch (e) { toast(e && e.code === "invalid_argument" ? "Non hai i permessi per salvare qui" : "Salvataggio non riuscito, riprova"); return false; } };
+
+/* ============ calcoli ============ */
+const food = n => FOODS[n] || (Object.values(S.alimenti).find(a => a.n === n) ? (a => [a.kcal, a.p, a.c, a.l, "P"])(Object.values(S.alimenti).find(a => a.n === n)) : null);
+const itemMac = it => { const v = it.v || food(it.n) || [0, 0, 0, 0]; const f = (num(it.g) || 0) / 100; return [v[0] * f, v[1] * f, v[2] * f, v[3] * f]; };
+const sumMac = items => (items || []).reduce((a, it) => { const m = itemMac(it); return a.map((x, i) => x + m[i]); }, [0, 0, 0, 0]);
+const dayItems = d => d && d.pasti ? Object.values(d.pasti).flat() : [];
+const dayMac = date => sumMac(dayItems(S.giorni[date]));
+const weights = () => Object.values(S.pesate).filter(p => num(p.peso) != null).sort((a, b) => a.date.localeCompare(b.date));
+function avg7(date) { const v = []; for (let i = 0; i < 7; i++) { const p = S.pesate[addDays(date, -i)]; if (p && num(p.peso) != null) v.push(num(p.peso)); } return v.length ? { v: v.reduce((a, b) => a + b) / v.length, n: v.length } : null; }
+const lastW = () => weights().at(-1) || null;
+const sleepH = s => { if (!s) return null; if (num(s.ore) != null) return num(s.ore); if (!s.letto || !s.sveglia) return null; const [a, b] = s.letto.split(":").map(Number), [c, d] = s.sveglia.split(":").map(Number); let m = c * 60 + d - (a * 60 + b); if (m <= 0) m += 1440; return +(m / 60).toFixed(1); };
+const wellTot = w => { if (!w) return null; const k = WELL.map(x => x[0]); return k.every(x => w[x]) ? k.reduce((a, x) => a + Number(w[x]), 0) : null; };
+const wellChip = t => t == null ? ["neu", "da compilare"] : t >= 20 ? ["good", "pronto"] : t >= 15 ? ["warn", "da monitorare"] : ["bad", "attenzione"];
+const mondayOf = s => { const d = parse(s); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return iso(d); };
+const played = m => m.puntiNoi != null && m.puntiNoi !== "" && m.puntiLoro != null && m.puntiLoro !== "";
+const resultOf = m => { const a = num(m.puntiNoi), b = num(m.puntiLoro); return a > b ? "V" : a < b ? "P" : "N"; };
+const teams = m => m.casa ? ["Rovato", m.avversario] : [m.avversario, "Rovato"];
+
+/* ============ grafici SVG ============ */
+const W = 420, H = 190, PL = 36, PR = 44, PT = 12, PB = 24;
+function nice(lo, hi, steps = 4) { if (lo === hi) { lo -= 1; hi += 1; } const raw = (hi - lo) / steps, mag = 10 ** Math.floor(Math.log10(raw)); const st = [1, 2, 2.5, 5, 10].map(x => x * mag).find(x => x >= raw); return { lo: Math.floor(lo / st) * st, hi: Math.ceil(hi / st) * st, st }; }
+function weightChart(n) {
+  const end = today(); const dates = Array.from({ length: n }, (_, i) => addDays(end, i - n + 1));
+  const raw = dates.map((d, i) => ({ i, d, v: S.pesate[d] && num(S.pesate[d].peso) })).filter(p => p.v != null);
+  if (raw.length < 2) return `<p class="empty">Servono almeno due pesate in questo periodo per disegnare l'andamento.</p>`;
+  const av = dates.map((d, i) => ({ i, d, a: avg7(d) })).filter(p => p.a && p.i >= raw[0].i).map(p => ({ i: p.i, d: p.d, v: p.a.v }));
+  const tg = num(S.profilo.pesoTarget); const vals = raw.map(p => p.v).concat(tg ? [tg] : []);
+  const { lo, hi, st } = nice(Math.min(...vals) - .3, Math.max(...vals) + .3);
+  const x = i => PL + (i / (n - 1)) * (W - PL - PR), y = v => PT + (1 - (v - lo) / (hi - lo)) * (H - PT - PB);
+  let g = "";
+  for (let v = lo; v <= hi + 1e-9; v += st) g += `<line class="grid" x1="${PL}" x2="${W - PR}" y1="${y(v)}" y2="${y(v)}"/><text x="${PL - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v, st < 1 ? 1 : 0)}</text>`;
+  [0, Math.floor((n - 1) / 2), n - 1].forEach(i => g += `<text x="${x(i)}" y="${H - 6}" text-anchor="${i === 0 ? "start" : i === n - 1 ? "end" : "middle"}">${shortDate(dates[i])}</text>`);
+  const path = av.map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`).join("");
+  const area = av.length > 1 ? `<path class="area" d="${path}L${x(av.at(-1).i)},${H - PB}L${x(av[0].i)},${H - PB}Z"/>` : "";
+  const dots = raw.map(p => `<circle class="raw" cx="${x(p.i)}" cy="${y(p.v)}" r="3"><title>${shortDate(p.d)}: ${fmt(p.v)} kg</title></circle>`).join("");
+  const e = av.at(-1);
+  if (tg) g += `<line class="tgt" x1="${PL}" x2="${W - PR}" y1="${y(tg)}" y2="${y(tg)}"/><text x="${W - PR + 4}" y="${y(tg) + 4}" style="fill:var(--accent);font-weight:700">${fmt(tg)}</text>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento del peso">${g}${area}${dots}<path class="ln" d="${path}"/><circle class="end" cx="${x(e.i)}" cy="${y(e.v)}" r="4.5"/><text class="endlbl" x="${x(e.i) + 8}" y="${y(e.v) + 4}">${fmt(e.v)}</text></svg>`;
+}
+function barChart(items, { target, unit, max, every = 1, fv = v => fmt(v, 0) }) {
+  const n = items.length; if (!items.some(it => it.v)) return `<p class="empty">Nessun dato ancora in questo periodo.</p>`;
+  const top = max ?? Math.max(...items.map(it => it.v || 0), target || 0) * 1.05;
+  const { hi, st } = nice(0, top); const bw = (W - PL - 12) / n, y = v => PT + (1 - v / hi) * (H - PT - PB);
+  let g = "";
+  for (let v = 0; v <= hi + 1e-9; v += st) g += `<line class="grid" x1="${PL}" x2="${W - 12}" y1="${y(v)}" y2="${y(v)}"/><text x="${PL - 6}" y="${y(v) + 4}" text-anchor="end">${fv(v)}</text>`;
+  items.forEach((it, i) => { const bx = PL + i * bw + bw * .18, w = bw * .64;
+    if (it.v) g += `<rect class="bar ${it.cls || ""}" x="${bx}" y="${y(it.v)}" width="${w}" height="${y(0) - y(it.v)}" rx="3"><title>${esc(it.t)}: ${fv(it.v)} ${unit}</title></rect>`;
+    if ((i % every === 0 && n - 1 - i >= every / 2) || i === n - 1) g += `<text x="${bx + w / 2}" y="${H - 6}" text-anchor="middle">${esc(it.l)}</text>`; });
+  if (target) g += `<line class="tgt" x1="${PL}" x2="${W - 12}" y1="${y(target)}" y2="${y(target)}"/>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+}
+function lineChart(pts, { lo, hi, st, unit }) {
+  const n = pts.length; const have = pts.filter(p => p.v != null); if (have.length < 2) return `<p class="empty">Compila il check-in per almeno due giorni per vedere l'andamento.</p>`;
+  const x = i => PL + (i / (n - 1)) * (W - PL - PR), y = v => PT + (1 - (v - lo) / (hi - lo)) * (H - PT - PB);
+  let g = ""; for (let v = lo; v <= hi + 1e-9; v += st) g += `<line class="grid" x1="${PL}" x2="${W - PR}" y1="${y(v)}" y2="${y(v)}"/><text x="${PL - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  [0, n - 1].forEach(i => g += `<text x="${x(i)}" y="${H - 6}" text-anchor="${i ? "end" : "start"}">${esc(pts[i].l)}</text>`);
+  const path = have.map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`).join("");
+  const e = have.at(-1);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}<path class="ln2" d="${path}"/>${have.map(p => `<circle cx="${x(p.i)}" cy="${y(p.v)}" r="3" fill="var(--accent)"><title>${esc(p.t)}: ${p.v} ${unit}</title></circle>`).join("")}<text class="endlbl" x="${x(e.i) + 8}" y="${y(e.v) + 4}">${e.v}</text></svg>`;
+}
+const mbar = (lab, color, v, t, unit = "g") => {
+  const pct = t ? Math.min(100, v / t * 100) : 0; const rem = t ? t - v : null;
+  return `<div class="mbar"><div class="top"><span><i class="dot" style="background:${color}"></i>${lab}</span><span><b>${int(v)}</b> <span class="t">/ ${int(t)} ${unit}</span></span></div>
+  <div class="track"><i style="width:${pct}%;background:${color}"></i></div>
+  <div class="rem">${rem == null ? "" : rem >= 0 ? `${int(rem)} ${unit} al riferimento` : `${int(-rem)} ${unit} oltre il riferimento`}</div></div>`;
+};
+
+/* ============ HOME ============ */
+function vHome() {
+  const t = today(), P = S.profilo, lw = lastW(), a7 = avg7(t), a7p = avg7(addDays(t, -7));
+  const trend = a7 && a7p ? a7.v - a7p.v : null;
+  const mac = dayMac(t), d = S.giorni[t] || {};
+  const sh = sleepH(d.sonno), wt = wellTot(d.wellness), [wc, wl] = wellChip(wt);
+  const sl7 = Array.from({ length: 7 }, (_, i) => sleepH((S.giorni[addDays(t, -i)] || {}).sonno)).filter(v => v != null);
+  const sAvg = sl7.length ? sl7.reduce((a, b) => a + b) / sl7.length : null;
+  const next = Object.values(S.partite).filter(m => m.data >= t && !played(m)).sort((a, b) => a.data.localeCompare(b.data))[0];
+  const dd = next ? diffDays(t, next.data) : null;
+  const mini = (lab, col, v, tg) => `<div style="display:grid;gap:3px"><div class="between" style="font-size:12px;gap:4px"><span><i class="dot" style="background:${col};width:7px;height:7px;margin-right:5px"></i>${lab}</span><span class="num" style="font-weight:700">${int(v)}<span style="color:var(--muted);font-weight:500">/${int(tg)}</span></span></div><div class="track" style="height:5px;margin:0"><i style="width:${tg ? Math.min(100, v / tg * 100) : 0}%;background:${col}"></i></div></div>`;
+  return `
+  <div style="display:grid;gap:2px;padding:2px 2px 0"><span class="eyebrow acc">${esc(dayName(t))}</span><h1>Lock-in di oggi</h1></div>
+  <div class="tiles">
+    <button class="tile" data-go="peso" style="--tc:var(--c-peso)"><span class="lab">Peso</span><span class="v">${a7 ? fmt(a7.v) : "–"}<small>kg</small></span>
+      <span class="s">media 7 giorni · ${a7 ? a7.n + "/7 pesate · " : ""}${lw ? (lw.date === t ? "oggi " : "ultima " + shortDate(lw.date) + " ") + fmt(num(lw.peso)) + " kg" : "nessuna pesata"}</span>
+      ${trend == null ? "" : `<span class="chip neu">${trend > 0 ? "▲" : trend < 0 ? "▼" : "="} ${fmt(Math.abs(trend))} kg in 7 giorni</span>`}</button>
+    <button class="tile" data-go="pasti" style="--tc:var(--c-cibo)"><span class="lab">Alimentazione${d.completa ? " · completa" : ""}</span><span class="v">${int(mac[0])}<small>/ ${int(P.kcal)} kcal</small></span>
+      <div style="display:grid;gap:6px;margin-top:4px">${mini("P", "var(--mp)", mac[1], P.p)}${mini("C", "var(--mc)", mac[2], P.c)}${mini("G", "var(--mg)", mac[3], P.l)}</div></button>
+    <button class="tile" data-sub="giornata" style="--tc:var(--c-sonno)"><span class="lab">Sonno</span><span class="v">${sAvg == null ? "–" : hm(sAvg).replace(" h ", "<small>h</small> ") + "<small>min</small>"}</span>
+      <span class="s">media 7 notti · ${sl7.length ? sl7.length + "/7 · " : ""}notte scorsa ${sh == null ? "da compilare" : hm(sh) + " min"}</span>
+      ${sAvg == null ? `<span class="chip neu">da compilare</span>` : `<span class="chip ${sAvg >= P.sonno ? "good" : sAvg >= P.sonno - 1 ? "warn" : "bad"}">${sAvg >= P.sonno ? "obiettivo raggiunto" : "sotto " + fmt(P.sonno, 0) + " h"}</span>`}</button>
+    <button class="tile" data-sub="giornata" style="--tc:var(--c-well)"><span class="lab">Wellness</span><span class="v">${wt ?? "–"}<small>/25</small></span>
+      <span class="s">oggi · fatica, sonno, dolori, stress, umore</span><span class="chip ${wc}">${wl}</span></button>
+    ${next ? `<button class="tile wide" data-sub="partite" style="--tc:var(--c-match)"><span class="lab">Prossima partita${next.giornata ? " · Giornata " + esc(next.giornata) : ""}</span>
+      <span class="v" style="font-size:22px">${esc(teams(next)[0])} – ${esc(teams(next)[1])}</span>
+      <span class="s">${esc(dayName(next.data))} · ${next.casa ? "in casa" : "in trasferta"}</span>
+      <span class="chip acc">${dd === 0 ? "oggi" : dd === 1 ? "domani" : "tra " + dd + " giorni"}</span></button>` : ""}
+  </div>
+  ${footer()}`;
+}
+const footer = () => `<p class="foot ${S.ready && db ? "ok" : ""}"><b></b>${S.ready && db ? "Sincronizzato nel tuo account: stessi dati da telefono e computer" : db ? "Collegamento…" : "Salvato su questo dispositivo · fai un backup ogni tanto"}</p>`;
+
+/* ============ PESO ============ */
+function vPeso() {
+  const t = today(), lw = lastW(), a7 = avg7(t), a7p = avg7(addDays(t, -7));
+  const trend = a7 && a7p ? a7.v - a7p.v : null; const tg = num(S.profilo.pesoTarget);
+  const ep = S.editPeso || { date: t, peso: S.pesate[t] ? S.pesate[t].peso : "", nota: S.pesate[t] ? S.pesate[t].nota : "" };
+  const list = weights().slice().reverse();
+  return `
+  <div class="hero">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div style="display:grid;gap:6px;min-width:0"><span class="eyebrow">Media ultimi 7 giorni</span>
+        <div class="big">${a7 ? fmt(a7.v) : "–"}<small> kg</small></div></div>
+      <button type="button" data-sub="obiettivi" style="text-align:right;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:10px 12px;display:grid;gap:2px;cursor:pointer;flex:none">
+        <span class="eyebrow acc" style="font-size:10.5px">Obiettivo</span>
+        ${tg ? `<span class="num" style="font-size:24px;font-weight:800">${fmt(tg)}<small style="font-size:13px;color:var(--muted)"> kg</small></span>
+        <span class="hint">${a7 ? (Math.abs(tg - a7.v) < .05 ? "raggiunto" : (tg > a7.v ? "mancano " : "−") + fmt(Math.abs(tg - a7.v)) + " kg") : ""}${S.profilo.pesoData ? "<br>entro " + esc(shortDate(S.profilo.pesoData)) : ""}</span>` : `<span class="hint">Imposta</span>`}
+      </button></div>
+    <span class="sub">${a7 ? a7.n + "/7 pesate · " : ""}${lw ? (lw.date === t ? "oggi " : "ultima pesata " + shortDate(lw.date) + " ") + fmt(num(lw.peso)) + " kg" : "Ancora nessuna pesata"}</span>
+    ${trend == null ? "" : `<span class="chip neu">${trend > 0 ? "▲ +" : trend < 0 ? "▼ −" : "= "}${fmt(Math.abs(trend))} kg rispetto alla settimana precedente</span>`}
+  </div>
+  <form class="card" id="pesoForm" style="display:grid;gap:12px">
+    <h2>${S.editPeso ? "Modifica pesata" : "Registra il peso"}</h2>
+    <div class="grid2">
+      <label class="f">Data<input class="inp" type="date" id="pw-date" value="${esc(ep.date)}" max="${t}" required></label>
+      <label class="f">Peso (kg)<input class="inp" id="pw-peso" inputmode="decimal" value="${esc(ep.peso ?? "")}" placeholder="es. 91,8" required></label>
+    </div>
+    <label class="f">Nota (facoltativa)<input class="inp" id="pw-nota" value="${esc(ep.nota ?? "")}" placeholder="es. dopo allenamento, cena abbondante"></label>
+    <div class="row"><button class="btn" type="submit" style="flex:1">Salva pesata</button>${S.editPeso ? `<button class="btn ghost" type="button" data-act="pesoCancel">Annulla</button><button class="btn danger" type="button" data-act="pesoDel">Elimina</button>` : ""}</div>
+    <p class="hint">Per confrontare i giorni pesati a digiuno, appena sveglio e dopo il bagno. Conta la media a 7 giorni, non la singola pesata.</p>
+  </form>
+  <div class="card">
+    <div class="between" style="margin-bottom:10px"><h2>Andamento</h2>
+      <div class="seg-t">${[7, 14, 30, 90].map(n => `<button type="button" data-wr="${n}" aria-pressed="${S.wRange === n}">${n === 7 ? "1 sett." : n + " gg"}</button>`).join("")}</div></div>
+    ${weightChart(S.wRange)}
+    <div class="legend"><span><i></i>media mobile 7 giorni</span><span><i class="dot2"></i>pesata</span>${num(S.profilo.pesoTarget) ? `<span><i class="dash"></i>obiettivo ${fmt(num(S.profilo.pesoTarget))} kg</span>` : ""}</div>
+  </div>
+  <div class="card">
+    <div class="between"><h2>Pesate registrate</h2>${list.length ? `<button class="btn link" data-act="csv">${IC.dl} CSV</button>` : ""}</div>
+    ${list.length ? `<div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Peso</th><th>Media 7 giorni</th><th>Note</th></tr></thead><tbody>
+      ${list.map(p => { const a = avg7(p.date); return `<tr class="click" data-peso="${p.date}"><td>${esc(longDate(p.date))}</td><td><b>${fmt(num(p.peso))} kg</b></td><td>${a ? fmt(a.v) + " kg (" + a.n + "/7)" : "–"}</td><td class="nt">${esc(p.nota) || "—"}</td></tr>`; }).join("")}
+    </tbody></table></div><p class="hint" style="margin-top:8px">Tocca una riga per modificarla.</p>` : `<p class="empty">Le pesate che salvi compaiono qui con la loro media a 7 giorni.</p>`}
+  </div>`;
+}
+
+/* ============ PASTI ============ */
+const dayNav = (label = "") => `<div class="card daynav" style="padding:10px">
+  <button class="ico box" type="button" data-nav="-1" aria-label="Giorno precedente">‹</button>
+  <div class="d"><strong>${esc(dayName(S.date))}</strong><input type="date" id="dayPick" value="${S.date}" max="${today()}" aria-label="Scegli il giorno"></div>
+  <button class="ico box" type="button" data-nav="1" aria-label="Giorno successivo" ${S.date >= today() ? "disabled" : ""}>›</button></div>`;
+function vPasti() {
+  const d = S.giorni[S.date] || {}, P = S.profilo, mac = dayMac(S.date);
+  return `
+  ${dayNav()}
+  <div class="hero">
+    <span class="eyebrow acc">${esc(longDate(S.date))}</span>
+    <div class="big">${int(mac[0])}<small> / ${int(P.kcal)} kcal</small></div>
+    <span class="sub">${d.completa ? "Giornata completa" : "Registrazione parziale"} · riferimento personalizzabile in Obiettivi</span>
+    <div><button class="btn ghost" data-act="completa">${IC.check} ${d.completa ? "Riapri la giornata" : "Segna giornata completa"}</button></div>
+    <div class="macros" style="margin-top:6px">
+      ${mbar("Proteine", "var(--mp)", mac[1], P.p)}${mbar("Carboidrati", "var(--mc)", mac[2], P.c)}${mbar("Grassi", "var(--mg)", mac[3], P.l)}
+    </div>
+  </div>
+  <div class="note">${IC.info}<span>I totali descrivono ciò che hai registrato, non l'intera giornata finché non la segni come completa. Per pasta, riso e carne usa il peso a crudo, come nel piano; scegli una voce "cotto" solo se pesi dopo la cottura.</span></div>
+  ${MEALS.map(m => mealCard(m, (d.pasti || {})[m.k] || [])).join("")}`;
+}
+function mealCard(m, items) {
+  const t = sumMac(items); const inPlan = PLAN.some(p => p.k === m.k);
+  return `<section class="card meal">
+    <div class="meal-h"><div>${m.t ? `<div class="time">${m.t}</div>` : `<div class="time">EXTRA</div>`}<h2>${esc(m.n)}</h2></div>
+      <button class="ico" data-add="${m.k}" aria-label="Aggiungi a ${esc(m.n)}">${IC.plus}</button></div>
+    ${items.length ? items.map((it, i) => { const mm = itemMac(it); return `<div class="item">
+      <div><div class="nm">${esc(it.n)}</div><div class="q">${fmt(num(it.g), 0)} g${" · " + srcLabel(it.src)}</div><div class="q"><span style="color:var(--mp)">P ${fmt(mm[1])}</span> · <span style="color:var(--mc)">C ${fmt(mm[2])}</span> · <span style="color:var(--mg)">G ${fmt(mm[3])}</span></div></div>
+      <div class="k">${int(mm[0])}<small>kcal</small></div>
+      <button class="ico" data-edit="${m.k}:${i}" aria-label="Modifica quantità">${IC.edit}</button>
+      <button class="ico" data-rm="${m.k}:${i}" aria-label="Elimina">${IC.trash}</button></div>`; }).join("")
+      + `<div class="mtot"><span><b>${int(t[0])}</b> kcal</span><span class="p">P <b>${int(t[1])}</b></span><span class="c">C <b>${int(t[2])}</b></span><span class="g">G <b>${int(t[3])}</b></span></div>`
+      : `<p class="empty">Niente registrato.${inPlan ? " Usa «Come da piano» per caricare le opzioni del tuo piano alimentare." : ""}</p>`}
+    <div class="meal-f">
+      ${inPlan ? `<button class="btn link" data-plan="${m.k}">${IC.plan} Come da piano</button>` : ""}
+      ${items.length ? `<button class="btn link" data-habit="${m.k}">${IC.book} Salva abituale</button>` : ""}
+      <button class="btn link" data-add="${m.k}">${IC.plus} Aggiungi</button>
+    </div></section>`;
+}
+async function saveDay(date, mut) {
+  const d = clone(S.giorni[date] || { date, pasti: {} }); if (!d.pasti) d.pasti = {};
+  mut(d); d.updatedAt = new Date().toISOString(); return safe(() => put("giorni", date, d));
+}
+
+/* ============ SHEET (aggiungi alimento / piano / modifica) ============ */
+let SH = null;
+function openSheet(state) { SH = state; drawSheet(); }
+function closeSheet() {
+  SH = null; const sc = $("#sheetRoot .scrim"); if (!sc) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { $("#sheetRoot").innerHTML = ""; return; }
+  sc.classList.add("out"); sc.addEventListener("animationend", e => { if (e.target === sc && !SH) $("#sheetRoot").innerHTML = ""; }, { once: false });
+  setTimeout(() => { if (!SH) $("#sheetRoot").innerHTML = ""; }, 400);
+}
+function allFoods() {
+  const own = Object.values(S.alimenti).map(a => [a.n, a.kcal, a.p, a.c, a.l, "P", a]);
+  return own.concat(Object.entries(FOODS).map(([n, v]) => [n, ...v]));
+}
+function searchResults() {
+  const q = (SH.q || "").trim().toLowerCase();
+  const habits = Object.values(S.abituali).filter(h => q ? h.nome.toLowerCase().includes(q) : h.meal === SH.meal);
+  let res = allFoods(); if (/^\d{6,14}$/.test(q)) res = res.filter(f => f[6] && f[6].bc === q); else if (q) { const ws = q.split(/\s+/); res = res.filter(f => ws.every(w => f[0].toLowerCase().includes(w))); res.sort((a, b) => (b[5] === "P") - (a[5] === "P") || (a[0].toLowerCase().startsWith(q) ? 0 : 1) - (b[0].toLowerCase().startsWith(q) ? 0 : 1)); }
+  else res = res.filter(f => f[5] !== "I").slice(0, 40);
+  return `${habits.length ? `<div><span class="eyebrow">Pasti abituali</span><div class="results">${habits.map(h => `<button type="button" data-habitadd="${h.id}"><span><span class="rn">${esc(h.nome)}</span><span class="rs" style="display:block">${h.items.length} alimenti · ${esc((MEAL_BY[h.meal] || {}).n || "")}</span></span><span class="rk">${int(sumMac(h.items)[0])} kcal</span></button>`).join("")}</div></div>` : ""}
+      <div><span class="eyebrow">${q ? res.length + " alimenti trovati" : "Alimenti del piano e tuoi"}</span><div class="results">
+      ${res.slice(0, 60).map(f => `<button type="button" data-pickfood="${esc(f[0])}"><span><span class="rn">${esc(f[0])}</span><span class="rs" style="display:block">${esc(srcLabel(f[5], f[6]))} · per 100 g</span></span><span class="rk">${int(f[1])} kcal<br>P ${fmt(f[2])} · C ${fmt(f[3])} · G ${fmt(f[4])}</span></button>`).join("") || `<p class="empty">Nessun risultato nel database. Usa i pulsanti qui sopra: codice a barre, foto o testo dell'etichetta, oppure cerca online.</p>`}
+      </div></div>`;
+}
+function qtyTot() {
+  const f = SH.food, g = num(SH.g) || 0, k = [f[1], f[2], f[3], f[4]].map(v => v * g / 100);
+  return `<div class="mtot" style="padding:0"><span><b>${int(k[0])}</b> kcal</span><span class="p">P <b>${fmt(k[1])}</b></span><span class="c">C <b>${fmt(k[2])}</b></span><span class="g">G <b>${fmt(k[3])}</b></span></div>`;
+}
+function drawSheet() {
+  if (!SH) return; const m = MEAL_BY[SH.meal]; let body = "";
+  if (SH.mode === "search") {
+    body = `<input class="inp" id="sq" type="search" placeholder="Cerca un alimento (es. riso, tonno, avena)" value="${esc(SH.q || "")}" autocomplete="off">
+      <div class="tools">
+        <button class="btn ghost" data-act="mBarcode">${IC.barcode} Codice a barre</button>
+        <button class="btn ghost" data-act="newFood">${IC.pen} Scrivi etichetta</button>
+        <button class="btn ghost" data-act="mOnline" style="grid-column:1/-1">${IC.globe} Cerca online</button>
+      </div>
+      <div id="sres">${searchResults()}</div>`;
+  } else if (SH.mode === "qty") {
+    const f = SH.food;
+    body = `<div><div style="font-weight:600;font-size:17px">${esc(f[0])}</div><div class="hint">${int(f[1])} kcal · P ${fmt(f[2])} · C ${fmt(f[3])} · G ${fmt(f[4])} per 100 g</div></div>
+      <label class="f">Quantità (g)<input class="inp" id="sg" inputmode="decimal" value="${esc(SH.g ?? "")}"></label>
+      <div id="sgtot">${qtyTot()}</div>
+      <button class="btn" data-act="qtyOk">${SH.idx != null ? "Aggiorna" : "Aggiungi a " + esc(m.n)}</button>
+      ${SH.idx == null ? `<button class="btn link" data-act="backSearch">‹ Torna alla ricerca</button>` : ""}`;
+  } else if (SH.mode === "plan") {
+    const pm = PLAN.find(p => p.k === SH.meal);
+    body = `<p class="hint">Per ogni gruppo scegli l'alternativa che hai mangiato. Le grammature sono quelle del piano: potrai correggerle dopo.</p>
+      ${pm.g.map((g, gi) => `<div class="pick"><label class="inc"><input type="checkbox" data-pinc="${gi}" ${SH.inc[gi] ? "checked" : ""}>${esc(g.n)}</label>
+        ${g.o.length > 1 ? `<select class="inp" data-psel="${gi}">${g.o.map((o, oi) => `<option value="${oi}" ${SH.sel[gi] === oi ? "selected" : ""}>${esc(o[0])} · ${o[1]} g · ${int(FOODS[o[0]][0] * o[1] / 100)} kcal</option>`).join("")}</select>`
+          : `<div class="hint" style="padding-left:28px">${esc(g.o[0][0])} · ${g.o[0][1]} g · ${int(FOODS[g.o[0][0]][0] * g.o[0][1] / 100)} kcal</div>`}</div>`).join("")}
+      <button class="btn" data-act="planOk">Aggiungi a ${esc(m.n)}</button>`;
+  } else if (SH.mode === "habit") {
+    body = `<label class="f">Nome del pasto abituale<input class="inp" id="hn" value="${esc(SH.nome || "")}" placeholder="es. Colazione avena e yogurt"></label>
+      <p class="hint">Salvo i ${SH.items.length} alimenti di questo pasto con le loro quantità. Li ritrovi in cima alla ricerca quando premi «Aggiungi».</p>
+      <button class="btn" data-act="habitOk">Salva pasto abituale</button>`;
+  } else if (SH.mode === "newFood") {
+    body = (SH.msg ? `<div class="note">${IC.info}<div>${SH.msg}</div></div>` : "") + foodForm(SH.f || {}) + `<button class="btn" data-act="newFoodOk">Salva e scegli la quantità</button>
+      <button class="btn link" data-act="backSearch">‹ Torna alla ricerca</button>`;
+  } else if (SH.mode === "barcode") {
+    const nf = SH.bcMiss;
+    body = `<p class="hint">Scrivi il numero sotto il codice a barre (8 o 13 cifre) oppure fai una foto al codice: lo leggo io.</p>
+      <div class="row"><input class="inp" id="bc" inputmode="numeric" placeholder="es. 8001234567890" value="${esc(SH.bc || "")}" style="flex:1"><button class="btn" data-act="bcGo">Cerca</button></div>
+      <label class="btn ghost">${IC.camera} Fotografa il codice a barre<input type="file" id="bcFile" accept="image/*" capture="environment" hidden></label>
+      ${SH.busy ? `<div class="busy">${esc(SH.busy)}</div>` : ""}
+      ${nf ? `<div class="note">${IC.info}<div>Il codice <b>${esc(SH.bc)}</b> non è ancora nel tuo database. Inseriscilo una volta e la prossima volta lo trovi subito.</div></div>
+        <button class="btn ghost" data-act="newFood">${IC.pen} Scrivi i valori dell'etichetta</button>
+        <div class="links"><a href="https://it.openfoodfacts.org/prodotto/${encodeURIComponent(SH.bc)}" target="_blank" rel="noopener">Apri su Open Food Facts ↗</a></div>
+        <p class="hint">Open Food Facts mostra i valori dell'etichetta: copiali con «Scrivi etichetta».</p>` : ""}
+      <button class="btn link" data-act="backSearch">‹ Torna alla ricerca</button>`;
+  } else if (SH.mode === "online") {
+    const q = SH.oq || "";
+    body = `<label class="f">Cosa cerchi?<input class="inp" id="oq" value="${esc(q)}" placeholder="es. Skyr Milbona, cornetto al bar, poke salmone"></label>
+      <div class="links" id="olinks">${onlineLinks(q)}</div>
+      <p class="hint">I link aprono la ricerca in una nuova scheda: trovato il prodotto, torna qui e usa «Scrivi etichetta» per copiare i valori per 100 g.</p>
+      <button class="btn ghost" data-act="newFood">${IC.pen} Scrivi etichetta</button>
+      <button class="btn link" data-act="backSearch">‹ Torna alla ricerca</button>`;
+  }
+  const title = { search: "Aggiungi a " + m.n, qty: SH.idx != null ? "Modifica quantità" : "Quantità", plan: m.n + " come da piano", habit: "Salva pasto abituale", newFood: "Nuovo alimento", barcode: "Codice a barre", online: "Cerca online" }[SH.mode];
+  const inner = `<div class="sheet-h"><h2>${esc(title)}</h2><button class="ico box" data-act="closeSheet" aria-label="Chiudi">${IC.close}</button></div>${body}`;
+  const open = $("#sheetRoot .scrim:not(.out) .sheet");
+  if (open) { open.innerHTML = inner; open.setAttribute("aria-label", title); open.scrollTop = 0; }
+  else $("#sheetRoot").innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}">${inner}</div></div>`;
+  if (SH.mode === "search" && !SH.q) $("#sq").focus();
+  if (SH.mode === "barcode" && !SH.bc && !SH.busy) $("#bc").focus();
+  if (SH.mode === "qty") { const i = $("#sg"); if (SH.focusQ) { i.focus(); i.select(); SH.focusQ = false; } }
+}
+const foodForm = f => `<label class="f">Nome<input class="inp" id="nf-n" value="${esc(f.n || "")}" placeholder="es. Skyr Milbona"></label>
+  <div class="grid2"><label class="f">Calorie (kcal)<input class="inp" id="nf-k" inputmode="decimal" value="${esc(f.kcal ?? "")}"></label>
+  <label class="f">Proteine (g)<input class="inp" id="nf-p" inputmode="decimal" value="${esc(f.p ?? "")}"></label>
+  <label class="f">Carboidrati (g)<input class="inp" id="nf-c" inputmode="decimal" value="${esc(f.c ?? "")}"></label>
+  <label class="f">Grassi (g)<input class="inp" id="nf-l" inputmode="decimal" value="${esc(f.l ?? "")}"></label>
+  <label class="f">Valori riferiti a (g)<input class="inp" id="nf-b" inputmode="decimal" value="100"></label>
+  <label class="f">Codice a barre<input class="inp" id="nf-bc" inputmode="numeric" value="${esc(f.bc || "")}" placeholder="facoltativo"></label></div>
+  <p class="hint">Se l'etichetta dà i valori per porzione, scrivi i grammi della porzione in «Valori riferiti a»: li converto io per 100 g.</p>`;
+const readFoodForm = () => {
+  const b = num($("#nf-b").value) || 100, k = x => x == null ? x : Math.round(x * 1000 / b) / 10;
+  const f = { n: $("#nf-n").value.trim(), kcal: k(num($("#nf-k").value)), p: k(num($("#nf-p").value) ?? 0), c: k(num($("#nf-c").value) ?? 0), l: k(num($("#nf-l").value) ?? 0) };
+  const bc = $("#nf-bc").value.replace(/\D/g, ""); if (bc) f.bc = bc; return f;
+};
+const onlineLinks = q => { const e = encodeURIComponent(q || ""); return `<a href="https://it.openfoodfacts.org/cgi/search.pl?search_terms=${e}&search_simple=1&action=process" target="_blank" rel="noopener">Open Food Facts ↗</a><a href="https://www.fatsecret.it/calorie-nutrizione/search?q=${e}" target="_blank" rel="noopener">FatSecret ↗</a><a href="https://www.google.com/search?q=${encodeURIComponent((q || "") + " valori nutrizionali 100 g")}" target="_blank" rel="noopener">Google ↗</a>`; };
+/* lettura codice a barre da foto: BarcodeDetector del browser, altrimenti ZXing */
+let zxingP = null;
+const loadZXing = () => zxingP || (zxingP = new Promise((ok, ko) => { const sc = document.createElement("script"); sc.src = "https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"; sc.onload = () => ok(window.ZXing); sc.onerror = () => { zxingP = null; ko(new Error("zxing")); }; document.head.appendChild(sc); }));
+async function decodeBarcode(file) {
+  if ("BarcodeDetector" in window) { try { const bmp = await createImageBitmap(file); const r = await new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e"] }).detect(bmp); if (r[0]) return r[0].rawValue; } catch (e) {} }
+  try { const Z = await loadZXing(); const url = URL.createObjectURL(file); try { const r = await new Z.BrowserMultiFormatReader().decodeFromImageUrl(url); return r.getText(); } finally { URL.revokeObjectURL(url); } } catch (e) {}
+  return null;
+}
+async function bcLookup(code) {
+  code = String(code || "").replace(/\D/g, ""); if (code.length < 8) return toast("Il codice ha almeno 8 cifre");
+  const own = Object.values(S.alimenti).find(a => a.bc === code);
+  if (own) { SH = { ...SH, mode: "qty", food: [own.n, own.kcal, own.p, own.c, own.l, "P", own], g: 100, idx: null, focusQ: true, busy: null }; return drawSheet(); }
+  SH = { ...SH, mode: "barcode", bc: code, bcMiss: true, busy: null }; drawSheet();
+}
+
+/* ============ ALTRO ============ */
+const MENU = [
+  ["giornata", IC.day, "Sonno e wellness", "Ore dormite, media, grafico e questionario"],
+  ["bia", IC.body, "BIA", "Composizione corporea, spiegazione dei valori e confronti"],
+  ["partite", IC.ball, "Partite", "Calendario Serie A2 e schede partita"],
+  ["piano", IC.apple, "Piano alimentare", "Le opzioni del tuo piano, pasto per pasto"],
+  ["alimenti", IC.plan, "Alimenti", "Database INRAN e alimenti tuoi"],
+  ["obiettivi", IC.target, "Obiettivi", "Calorie, macro, sonno, acqua"],
+  ["backup", IC.dl, "Backup dati", "Esporta e importa tutto in un file"]
+];
+function vAltro() {
+  if (S.sub === "menu") return `<div class="hero"><span class="eyebrow">Altro</span><h1>Tutto il resto</h1><span class="sub">Recupero, composizione corporea, partite e impostazioni.</span></div>
+    <div class="menu">${MENU.map(([k, ic, t, s]) => `<button data-sub="${k}"><span class="mi">${ic}</span><span><strong>${t}</strong><small>${s}</small></span>${IC.chev}</button>`).join("")}</div>${footer()}`;
+  const back = `<button class="back" data-sub="menu">‹ Altro</button>`;
+  return back + ({ giornata: vGiornata, bia: vBia, partite: vPartite, piano: vPiano, alimenti: vAlimenti, obiettivi: vObiettivi, backup: vBackup }[S.sub] || (() => ""))();
+}
+
+/* --- giornata --- */
+const segC = (name, val) => `<div class="seg" role="radiogroup">${[1, 2, 3, 4, 5].map(n => `<label><input type="radio" name="${name}" value="${n}" ${Number(val) === n ? "checked" : ""}><span>${n}</span></label>`).join("")}</div>`;
+const val = x => x == null ? "" : esc(x);
+const hm = v => { if (v == null) return "–"; const t = Math.round(v * 60); return `${Math.floor(t / 60)} h ${String(t % 60).padStart(2, "0")}`; };
+const sleep7 = date => { const v = Array.from({ length: 7 }, (_, i) => sleepH((S.giorni[addDays(date, -i)] || {}).sonno)).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+function vGiornata() {
+  const t = today(), sD = S.sDate || t, wD = S.wDate || t;
+  const s = (S.giorni[sD] || {}).sonno || {}, w = (S.giorni[wD] || {}).wellness || {}, P = S.profilo, goal = num(P.sonno) || 7;
+  const nights = Object.values(S.giorni).filter(g => sleepH(g.sonno) != null).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 30);
+  const cur = sleepH(s); const sh = s.h != null ? s.h : cur != null ? Math.floor(cur + 1e-9) : null, sm = s.m != null ? s.m : cur != null ? Math.round((cur - Math.floor(cur + 1e-9)) * 60) : null;
+  const last7 = Array.from({ length: 7 }, (_, i) => sleepH((S.giorni[addDays(t, -i)] || {}).sonno)).filter(v => v != null);
+  const avg = last7.length ? last7.reduce((a, b) => a + b, 0) / last7.length : null, ok7 = last7.filter(v => v >= goal).length;
+  const n = S.sRange || 14;
+  const bars = Array.from({ length: n }, (_, i) => { const dd = addDays(t, i - n + 1), v = sleepH((S.giorni[dd] || {}).sonno); return { v, cls: v != null && v < goal ? "low" : "", l: n <= 7 ? parse(dd).toLocaleDateString("it-IT", { weekday: "narrow" }) : shortDate(dd), t: dayName(dd) }; });
+  const all = bars.filter(b => b.v != null), okN = all.filter(b => b.v >= goal).length;
+  const wt = wellTot(w);
+  return `<div class="hero">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div style="display:grid;gap:6px;min-width:0"><span class="eyebrow">Sonno · media ultime 7 notti</span>
+        <div class="big">${avg == null ? "–" : hm(avg).replace(" h ", "<small> h </small>")}<small>${avg == null ? "" : " min"}</small></div>
+        <span class="sub">${last7.length ? `${last7.length} notti registrate · ${ok7} su ${last7.length} sopra l'obiettivo` : "Registra le ore delle notti per vedere la media"}</span></div>
+      <button type="button" data-sub="obiettivi" style="text-align:right;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:10px 12px;display:grid;gap:2px;cursor:pointer;flex:none">
+        <span class="eyebrow acc" style="font-size:10.5px">Obiettivo</span>
+        <span class="num" style="font-size:24px;font-weight:800">${fmt(goal, goal % 1 ? 1 : 0)}<small style="font-size:13px;color:var(--muted)"> h</small></span>
+        <span class="hint">${avg == null ? "" : avg >= goal ? "in linea" : "mancano " + hm(goal - avg).replace("0 h ", "") + " min"}</span></button>
+    </div></div>
+  <form class="card" id="sleepForm" style="display:grid;gap:12px"><h2>Sonno della notte</h2>
+    <label class="f">Data del risveglio<input class="inp" type="date" id="s-date" value="${sD}" max="${t}"></label>
+    <p class="hint">${S.giorni[sD] && sleepH(S.giorni[sD].sonno) != null ? "Notte già registrata: se salvi, la aggiorni." : "La notte che finisce la mattina di " + esc(dayName(sD).toLowerCase()) + "."}</p>
+    <div class="grid2"><label class="f">Ore<input class="inp" id="s-h" inputmode="numeric" value="${val(sh)}" placeholder="es. 7"></label>
+    <label class="f">Minuti<input class="inp" id="s-m" inputmode="numeric" value="${val(sm)}" placeholder="es. 30"></label></div>
+    <div class="wrow"><span class="lab">Qualità<small>1 pessima · 5 ottima</small></span>${segC("g-sq", s.qualita)}</div>
+    <button class="btn" type="submit">Salva il sonno</button></form>
+  <div class="card"><div class="between" style="margin-bottom:8px;gap:8px;flex-wrap:wrap"><h2>Durata del sonno</h2>
+      <div class="seg-t">${[7, 14, 30].map(k => `<button type="button" data-sr="${k}" aria-pressed="${n === k}">${k === 7 ? "1 sett." : k + " notti"}</button>`).join("")}</div></div>
+    ${barChart(bars, { target: goal, unit: "h", max: Math.max(10, goal + 2), every: n <= 7 ? 1 : n <= 14 ? 3 : 7, fv: v => fmt(v, v % 1 ? 1 : 0) })}
+    <div class="legend"><span><i></i>sopra l'obiettivo</span><span><i class="low"></i>sotto l'obiettivo</span><span><i class="dash"></i>obiettivo ${fmt(goal, goal % 1 ? 1 : 0)} h</span></div>
+    ${all.length ? `<p class="hint" style="margin-top:8px">In questo periodo: ${okN} notti su ${all.length} ad almeno ${fmt(goal, goal % 1 ? 1 : 0)} h, media ${hm(all.reduce((a, b) => a + b.v, 0) / all.length)} min.</p>` : ""}</div>
+  ${nights.length ? `<div class="card"><h2>Notti registrate</h2><div class="tbl-wrap"><table><thead><tr><th>Risveglio</th><th>Dormito</th><th>Media 7 gg</th><th>Qualità</th></tr></thead><tbody>
+    ${nights.map(g => { const h = sleepH(g.sonno), q = g.sonno.qualita; return `<tr class="click" data-night="${g.date}"><td>${esc(shortDate(g.date))}</td><td><b style="color:${h < goal ? "var(--bad)" : "inherit"}">${hm(h)} min</b></td><td>${hm(sleep7(g.date))} min</td><td>${q ? q + "/5" : "—"}</td></tr>`; }).join("")}
+    </tbody></table></div><p class="hint" style="margin-top:8px">Tocca una notte per modificarla.</p></div>` : ""}
+  <form class="card" id="wellForm" style="display:grid;gap:12px"><div class="between"><h2>Wellness</h2><span class="sub">${wt == null ? "–" : wt + "/25"}</span></div>
+    <label class="f">Data<input class="inp" type="date" id="w-date" value="${wD}" max="${t}"></label>
+    ${WELL.map(([k, l, h]) => `<div class="wrow"><span class="lab">${l}<small>${h}</small></span>${segC("w-" + k, w[k])}</div>`).join("")}
+    <p class="hint">Questionario a 5 voci sul modello di McLean et al. (2010): più alto il totale su 25, migliore lo stato percepito.</p>
+    <button class="btn" type="submit">Salva il wellness</button></form>`;
+}
+const radio = n => { const e = document.querySelector(`input[name="${n}"]:checked`); return e ? Number(e.value) : null; };
+
+/* --- BIA --- */
+function vBia() {
+  const vs = Object.values(S.bia).sort((a, b) => b.date.localeCompare(a.date));
+  if (S.biaEdit) return biaForm(S.biaEdit);
+  if (!vs.length) return `<div class="hero"><span class="eyebrow">Dati della visita</span><h1>BIA</h1><span class="sub">Nessuna visita registrata.</span><div><button class="btn" data-act="biaNew">${IC.plus} Nuova visita</button></div></div>`;
+  const v = S.bia[S.biaSel] || vs[0]; const c = S.biaCmp ? S.bia[S.biaCmp] : null;
+  const cmpOpts = vs.filter(x => x.date !== v.date);
+  const tile = ([k, lab, u, dec, ref, k2, u2]) => { const x = num(v[k]); if (x == null) return ""; const y = c ? num(c[k]) : null; const dlt = y == null ? null : x - y;
+    const comp = k2 && num(v[k2]) != null ? `${fmt(num(v[k2]), 1)} ${u2} · ` : "";
+    const wide = ref === "wide"; if (wide) ref = null;
+    let bar = ""; if (ref) { const [mn, a, b, mx] = ref, pc = z => Math.max(0, Math.min(100, (z - mn) / (mx - mn) * 100));
+      bar = `<div class="ref" aria-hidden="true"><span class="ok" style="left:${pc(a)}%;width:${pc(b) - pc(a)}%"></span><span class="me" style="left:${pc(x)}%"></span></div><div class="ref-l"><span>${fmt(mn, dec)}</span><span>${fmt(a, dec)}–${fmt(b, dec)}</span><span>${fmt(mx, dec)}</span></div>`; }
+    return `<div class="tile ${ref || wide ? "wide" : ""}" style="cursor:default"><span class="lab">${lab}</span><span class="v">${fmt(x, dec)}<small>${u}</small></span>
+      ${BIA_INFO[k] ? `<span class="hint" style="line-height:1.45">${BIA_INFO[k]}</span>` : ""}
+      <span class="s">${comp}${dlt == null ? (cmpOpts.length ? "nessun confronto" : "prima misura disponibile") : `<span class="delta ${Math.abs(dlt) < (dec ? .05 : 1) ? "flat" : dlt > 0 ? "up" : "down"}">${dlt > 0 ? "+" : dlt < 0 ? "−" : ""}${fmt(Math.abs(dlt), dec)} ${u}</span> rispetto al ${shortDate(c.date)}`}</span>${bar}</div>`; };
+  return `<div class="hero"><span class="eyebrow">Dati della visita</span><h1>BIA</h1>
+    <span class="sub">Composizione corporea · ${esc(v.strumento || "BIA")} · ${esc(longDate(v.date))}</span>
+    <div class="row"><button class="btn" data-act="biaNew">${IC.plus} Nuova visita</button><button class="btn ghost" data-act="biaEdit">${IC.edit} Modifica visita</button></div></div>
+  <div class="grid2"><label class="f">Visita<select class="inp" id="biaSel">${vs.map(x => `<option value="${x.date}" ${x.date === v.date ? "selected" : ""}>${esc(longDate(x.date))}</option>`).join("")}</select></label>
+    <label class="f">Confronta con<select class="inp" id="biaCmp"><option value="">Nessun confronto</option>${cmpOpts.map(x => `<option value="${x.date}" ${c && x.date === c.date ? "selected" : ""}>${esc(longDate(x.date))}</option>`).join("")}</select></label></div>
+  <div class="note">${IC.info}<span>Le fasce verdi sono le medie di riferimento del <b>referto Bodygram Standard</b> per la popolazione generale, non valori di rugbisti di Serie A2. Sono riferimenti descrittivi, non obiettivi. Le stime BIA dipendono da metodo e condizioni di misura: confronta solo visite fatte con lo stesso strumento, a digiuno e senza allenamento nelle ore prima.</span></div>
+  <div class="tiles">
+    <div class="tile" style="cursor:default"><span class="lab">Peso visita</span><span class="v">${fmt(num(v.peso))}<small>kg</small></span><span class="s">${c && num(c.peso) != null ? `${fmt(num(v.peso) - num(c.peso))} kg dal ${shortDate(c.date)}` : "BMI " + fmt(num(v.peso) / ((num(v.altezza) || S.profilo.altezza) / 100) ** 2)}</span></div>
+    <div class="tile" style="cursor:default"><span class="lab">Altezza</span><span class="v">${fmt(num(v.altezza) || S.profilo.altezza)}<small>cm</small></span><span class="s">Rz ${fmt(num(v.rz))} Ω · Xc ${fmt(num(v.xc))} Ω</span><span class="hint" style="line-height:1.45">Rz (resistenza) è l'opposizione dei liquidi al passaggio della corrente; Xc (reattanza) dipende dalle membrane delle cellule. Sono i due valori misurati: tutto il resto è calcolato da questi.</span></div>
+    ${BIA.map(tile).join("")}
+  </div>
+  ${v.note ? `<div class="card"><h3>Note della visita</h3><p class="hint" style="margin-top:6px;white-space:pre-wrap">${esc(v.note)}</p></div>` : ""}`;
+}
+const BIA_FORM = [["peso", "Peso (kg)"], ["altezza", "Altezza (cm)"], ["rz", "Rz (Ω)"], ["xc", "Xc (Ω)"], ["pha", "Angolo di fase (°)"], ["tbw", "Acqua totale TBW (L)"], ["tbwPct", "TBW (%)"], ["ecw", "Acqua extracell. ECW (L)"], ["ecwPct", "ECW (%)"], ["icw", "Acqua intracell. ICW (L)"], ["icwPct", "ICW (%)"], ["ffm", "Massa magra FFM (kg)"], ["ffmPct", "FFM (%)"], ["fm", "Massa grassa FM (kg)"], ["fmPct", "FM (%)"], ["bcm", "Massa cellulare BCM (kg)"], ["bcmPct", "BCM (%)"], ["mm", "Massa muscolare MM (kg)"], ["smm", "Muscolo-scheletrica SMM (kg)"], ["smmPct", "SMM (%)"], ["asmm", "Appendicolare ASMM (kg)"], ["bmr", "Metabolismo basale (kcal)"], ["tdee", "Dispendio TDEE (kcal)"]];
+function biaForm(v) {
+  return `<form class="card" id="biaForm" style="display:grid;gap:12px"><h2>${S.bia[v.date] && !v._new ? "Modifica visita" : "Nuova visita"}</h2>
+    <div class="grid2"><label class="f">Data<input class="inp" type="date" id="b-date" value="${esc(v.date || today())}" required></label>
+    <label class="f">Strumento<input class="inp" id="b-str" value="${esc(v.strumento || "AKERN · Bodygram Standard 3.4.24")}"></label></div>
+    <div class="grid2">${BIA_FORM.map(([k, l]) => `<label class="f">${l}<input class="inp" id="b-${k}" inputmode="decimal" value="${val(v[k])}"></label>`).join("")}</div>
+    <label class="f">Note<textarea class="inp" id="b-note">${esc(v.note)}</textarea></label>
+    <div class="row"><button class="btn" type="submit" style="flex:1">Salva visita</button><button class="btn ghost" type="button" data-act="biaCancel">Annulla</button>${S.bia[v.date] && !v._new ? `<button class="btn danger" type="button" data-act="biaDel">Elimina</button>` : ""}</div></form>`;
+}
+
+/* --- partite --- */
+function matchCard(m, edit = true) {
+  const [h, a] = teams(m); const d = parse(m.data); const pl = played(m);
+  return `<div class="mcard">
+    <div class="mdate"><b>${d.getDate()}</b><span>${d.toLocaleDateString("it-IT", { month: "short" }).replace(".", "")}</span><span style="margin-top:2px">${d.getFullYear()}</span></div>
+    <div style="min-width:0">
+      <div class="between" style="align-items:flex-start"><div style="display:grid;gap:4px"><span class="tag">${m.casa ? "Casa" : "Trasferta"}</span>
+        <span class="hint">${m.giornata ? "Giornata " + esc(m.giornata) : esc(m.competizione || "")}${pl ? "" : " · in programma"}</span></div>
+        ${edit ? `<button class="btn ghost sm" data-match="${esc(m.id)}">${IC.edit} Scheda</button>` : ""}</div>
+      <div class="mteams">${esc(h)}<span class="vs">vs</span>${esc(a)}</div>
+      ${pl ? `<div class="row" style="margin-top:8px"><span class="res ${resultOf(m)}">${resultOf(m)}</span><span class="mscore">${m.casa ? m.puntiNoi : m.puntiLoro}–${m.casa ? m.puntiLoro : m.puntiNoi}</span>
+        <span class="hint">${m.minuti != null ? m.minuti + "'" : ""}${m.mete ? " · " + m.mete + (m.mete > 1 ? " mete" : " meta") : ""}${num(m.trasfTot) ? " · trasf. " + (num(m.trasf) || 0) + "/" + num(m.trasfTot) : ""}${m.acciacchi ? " · acciacchi" : ""}</span></div>` : ""}
+    </div></div>`;
+}
+function vPartite() {
+  if (S.editMatch) return matchForm(S.editMatch);
+  const ms = Object.values(S.partite).sort((a, b) => a.data.localeCompare(b.data)); const t = today();
+  const up = ms.filter(m => !played(m)), done = ms.filter(played).reverse();
+  const sum = k => done.reduce((a, m) => a + (num(m[k]) || 0), 0); const tf = sum("trasf"), tt = sum("trasfTot");
+  const voti = done.map(m => num(m.voto)).filter(x => x != null);
+  return `<div class="hero"><span class="eyebrow">Rugby Rovato · Serie A2</span><h1>Partite</h1>
+    <span class="sub">Calendario e schede partita. Dopo il match apri «Scheda» e inserisci risultato, minuti, statistiche e acciacchi.</span>
+    <div><button class="btn" data-act="newMatch">${IC.plus} Aggiungi partita</button></div></div>
+  <div class="card"><h2 style="margin-bottom:12px">Stagione</h2><div class="stats">
+    <div><b>${done.length}</b><span>presenze</span></div><div><b>${int(sum("minuti"))}</b><span>minuti</span></div><div><b>${sum("mete")}</b><span>mete</span></div>
+    <div><b>${tt ? tf + "/" + tt : "–"}</b><span>trasf. fatte</span></div><div><b>${tt ? Math.round(tf / tt * 100) + "%" : "–"}</b><span>% al piede</span></div><div><b>${voti.length ? fmt(voti.reduce((a, b) => a + b) / voti.length) : "–"}</b><span>voto medio</span></div></div></div>
+  ${up.length ? `<h2>In programma</h2>${up.map(m => `<div class="card">${matchCard(m)}</div>`).join("")}` : ""}
+  ${done.length ? `<h2>Giocate</h2>${done.map(m => `<div class="card">${matchCard(m)}</div>`).join("")}` : ""}
+  ${!ms.length ? `<p class="empty">Nessuna partita in calendario.</p>` : ""}`;
+}
+function matchForm(m) {
+  const isNew = !S.partite[m.id];
+  return `<form class="card" id="matchForm" style="display:grid;gap:12px"><h2>${isNew ? "Nuova partita" : "Scheda partita"}</h2>
+    <div class="grid2"><label class="f">Data<input class="inp" type="date" id="m-data" value="${val(m.data)}" required></label>
+    <label class="f">Giornata<input class="inp" id="m-gio" inputmode="numeric" value="${val(m.giornata)}"></label></div>
+    <div class="grid2"><label class="f">Avversario<input class="inp" id="m-avv" value="${val(m.avversario)}" required></label>
+    <label class="f">Campo<select class="inp" id="m-casa"><option value="1" ${m.casa !== false ? "selected" : ""}>In casa</option><option value="0" ${m.casa === false ? "selected" : ""}>In trasferta</option></select></label></div>
+    <label class="f">Competizione<select class="inp" id="m-comp">${["Serie A2", "Coppa", "Amichevole", "Altro"].map(o => `<option ${(m.competizione || "Serie A2") === o ? "selected" : ""}>${o}</option>`).join("")}</select></label>
+    <h3 style="margin-top:6px">Dopo la partita</h3>
+    <div class="grid2"><label class="f">Punti Rovato<input class="inp" id="m-noi" inputmode="numeric" value="${val(m.puntiNoi)}"></label>
+    <label class="f">Punti avversari<input class="inp" id="m-loro" inputmode="numeric" value="${val(m.puntiLoro)}"></label></div>
+    <div class="grid3"><label class="f">Maglia n°<input class="inp" id="m-mag" inputmode="numeric" value="${val(m.maglia)}"></label>
+    <label class="f">Minuti giocati<input class="inp" id="m-min" inputmode="numeric" value="${val(m.minuti)}"></label>
+    <label class="f">Mete<input class="inp" id="m-mete" inputmode="numeric" value="${val(m.mete)}"></label></div>
+    <div class="grid3"><label class="f">Trasformazioni fatte<input class="inp" id="m-tf" inputmode="numeric" value="${val(m.trasf)}"></label>
+    <label class="f">Trasformazioni totali<input class="inp" id="m-tt" inputmode="numeric" value="${val(m.trasfTot)}"></label>
+    <label class="f">Voto (1–10)<input class="inp" id="m-voto" inputmode="decimal" value="${val(m.voto)}"></label></div>
+    <label class="f">Acciacchi (botte, dolori, zona e intensità)<textarea class="inp" id="m-acc" placeholder="es. botta alla spalla dx, 4/10, nessun limite nei movimenti">${esc(m.acciacchi)}</textarea></label>
+    <label class="f">Note sulla partita (com'è andata, cosa migliorare)<textarea class="inp" id="m-note">${esc(m.note)}</textarea></label>
+    <div class="row"><button class="btn" type="submit" style="flex:1">Salva</button><button class="btn ghost" type="button" data-act="matchCancel">Annulla</button>${isNew ? "" : `<button class="btn danger" type="button" data-act="matchDel">Elimina</button>`}</div></form>`;
+}
+
+/* --- piano --- */
+function vPiano() {
+  return `<div class="hero"><span class="eyebrow">Dott. Giorgio Mazza · Nutrium</span><h1>Piano alimentare</h1><span class="sub">Creato il 3 agosto 2026. In ogni gruppo scegli una sola alternativa; le grammature sono a crudo.</span></div>
+  ${PLAN.map(m => `<div class="card"><div class="meal-h" style="border:0;padding:0"><div><div class="time" style="font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:.14em">${m.t}</div><h2>${esc(m.n)}</h2></div></div>
+    ${m.g.map(g => `<div class="plan-g"><strong>${esc(g.n)}</strong><ul>${g.o.map(o => `<li>${esc(o[0])} · ${o[1]} g · ${int(FOODS[o[0]][0] * o[1] / 100)} kcal</li>`).join("")}</ul></div>`).join("")}</div>`).join("")}
+  <div class="card"><h2>Raccomandazioni principali</h2><ul class="hint" style="padding-left:18px;font-size:14px;line-height:1.6">
+    <li>Acqua tra i pasti: più di 3 litri al giorno.</li><li>Sonno: almeno 7–8 ore per recupero, fame e sensibilità insulinica.</li>
+    <li>Pesce almeno 3 volte a settimana, legumi almeno 1, carne rossa al massimo 2.</li><li>Niente olio aggiunto se il piatto lo contiene già; limita sale, zuccheri e alcol.</li>
+    <li>Regola 80/20: costanza, con 1–2 pasti liberi a settimana gestiti.</li></ul></div>`;
+}
+
+/* --- alimenti --- */
+function vAlimenti() {
+  const own = Object.values(S.alimenti).sort((a, b) => a.n.localeCompare(b.n));
+  return `<div class="hero"><span class="eyebrow">Database</span><h1>Alimenti</h1><span class="sub">${Object.keys(FOODS).length} alimenti: tabelle INRAN che mi hai mandato, prodotti del piano con valori medi da etichetta e cibi comuni cercati online. I tuoi prodotti (anche con codice a barre) li aggiungi qui o da «Aggiungi» nei pasti.</span></div>
+  <form class="card" id="foodForm" style="display:grid;gap:12px"><h2>${S.editFood ? "Modifica alimento" : "Nuovo alimento"}</h2>${foodForm(S.editFood || {})}
+    <div class="row"><button class="btn" type="submit" style="flex:1">Salva alimento</button>${S.editFood ? `<button class="btn ghost" type="button" data-act="foodCancel">Annulla</button><button class="btn danger" type="button" data-act="foodDel">Elimina</button>` : ""}</div></form>
+  ${own.length ? `<div class="card"><h2>I tuoi alimenti</h2><div class="results">${own.map(a => `<button type="button" data-ownfood="${a.id}"><span class="rn">${esc(a.n)}</span><span class="rk">${int(a.kcal)} kcal · P ${fmt(a.p)} · C ${fmt(a.c)} · G ${fmt(a.l)}</span></button>`).join("")}</div></div>` : ""}
+  <div class="card" style="display:grid;gap:10px"><h2>Cerca nel database</h2><input class="inp" id="aq" type="search" value="${esc(S.aq || "")}" placeholder="es. salmone, ricotta, pane">
+    <div id="alist">${alimList()}</div></div>`;
+}
+function alimList() {
+  const q = (S.aq || "").toLowerCase().trim(); const all = allFoods().filter(f => !q || q.split(/\s+/).every(w => f[0].toLowerCase().includes(w)));
+  return `<div class="results">${all.slice(0, 50).map(f => `<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;border-top:1px solid var(--line);padding:10px 2px"><span><span class="rn">${esc(f[0])}</span><span class="rs" style="display:block">${esc(srcLabel(f[5], f[6]))}</span></span><span class="rk">${int(f[1])} kcal<br>P ${fmt(f[2])} · C ${fmt(f[3])} · G ${fmt(f[4])}</span></div>`).join("")}</div>
+    <p class="hint">Valori per 100 g di parte edibile. ${all.length > 50 ? "Mostro i primi 50: affina la ricerca." : ""}</p>`;
+}
+
+/* --- backup --- */
+const COL_N = { giorni: "giorni (pasti, sonno, wellness)", pesate: "pesate", bia: "visite BIA", partite: "partite", alimenti: "alimenti tuoi", abituali: "pasti abituali" };
+function vBackup() {
+  const cnt = o => COLS.map(c => `<tr><td>${COL_N[c]}</td><td style="text-align:right"><b>${Object.keys(o[c] || {}).length}</b></td></tr>`).join("");
+  const im = S.imp;
+  return `<div class="hero"><span class="eyebrow">Sicurezza dei dati</span><h1>Backup</h1>
+    <span class="sub">${db ? "Qui i dati sono salvati nel tuo account Claude." : "Qui i dati sono salvati solo su questo dispositivo: se cancelli i dati del browser o cambi telefono li perdi."} Con il backup li porti da un posto all'altro.</span></div>
+  <div class="card" style="display:grid;gap:12px"><h2>Esporta</h2><p class="hint">Scarica un file .json con tutto: pesate, pasti, sonno, wellness, BIA, partite, alimenti, pasti abituali e obiettivi.</p>
+    <div class="tbl-wrap"><table><tbody>${cnt(S)}</tbody></table></div>
+    <button class="btn" data-act="exportJson">${IC.dl} Scarica il backup</button></div>
+  <div class="card" style="display:grid;gap:12px"><h2>Importa</h2>
+    ${im ? `<p class="hint">Backup del ${esc(im.esportato ? shortDate(im.esportato.slice(0, 10)) : "file scelto")}. Contiene:</p><div class="tbl-wrap"><table><tbody>${cnt(im)}</tbody></table></div>
+      <p class="hint">Le voci del file si aggiungono a quelle già presenti; se una data o una partita c'è in tutti e due, vince quella del file. Niente viene cancellato.</p>
+      <div class="row"><button class="btn" data-act="importOk" style="flex:1">Importa</button><button class="btn ghost" data-act="importCancel">Annulla</button></div>`
+    : `<p class="hint">Scegli un file di backup esportato da loackkainn (anche dalla versione dentro Claude).</p>
+      <label class="btn ghost">Scegli il file<input type="file" id="impFile" accept=".json,application/json" hidden></label>`}</div>`;
+}
+async function saveFile(filename, data, type) {
+  if (dl) { try { await dl.save({ filename, data }); } catch (err) { if (err && err.code !== "declined") toast("Download non riuscito"); } return; }
+  try { const url = URL.createObjectURL(new Blob([data], { type })); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000); }
+  catch (e) { toast("Download non riuscito"); }
+}
+
+/* --- obiettivi --- */
+function vObiettivi() {
+  const P = S.profilo, lw = lastW(); const kg = lw ? num(lw.peso) : null;
+  const kc = P.p * 4 + P.c * 4 + P.l * 9;
+  return `<form class="card" id="profForm" style="display:grid;gap:12px"><h2>Obiettivi giornalieri</h2>
+    <div class="grid2"><label class="f">Peso obiettivo (kg)<input class="inp" id="p-pt" inputmode="decimal" value="${val(P.pesoTarget)}" placeholder="es. 93"></label>
+    <label class="f">Entro il<input class="inp" type="date" id="p-pd" value="${val(P.pesoData)}"></label>
+    <label class="f">Calorie (kcal)<input class="inp" id="p-kcal" inputmode="numeric" value="${val(P.kcal)}"></label>
+    <label class="f">Proteine (g)<input class="inp" id="p-p" inputmode="numeric" value="${val(P.p)}"></label>
+    <label class="f">Carboidrati (g)<input class="inp" id="p-c" inputmode="numeric" value="${val(P.c)}"></label>
+    <label class="f">Grassi (g)<input class="inp" id="p-l" inputmode="numeric" value="${val(P.l)}"></label>
+    <label class="f">Sonno (ore)<input class="inp" id="p-s" inputmode="decimal" value="${val(P.sonno)}"></label>
+    <label class="f">Acqua (L)<input class="inp" id="p-a" inputmode="decimal" value="${val(P.acqua)}"></label>
+    <label class="f">Altezza (cm)<input class="inp" id="p-h" inputmode="decimal" value="${val(P.altezza)}"></label></div>
+    <p class="hint">I macro attuali valgono ${int(kc)} kcal (4 kcal/g per proteine e carboidrati, 9 per i grassi).${kg ? ` Con ${fmt(kg)} kg le proteine sono ${fmt(P.p / kg)} g/kg e i carboidrati ${fmt(P.c / kg)} g/kg.` : ""} Il riferimento di partenza (3614 kcal, P 197, C 520, G 78) è quello che usavi nella vecchia app; la somma delle prime opzioni del piano dà circa 3700 kcal.</p>
+    <button class="btn" type="submit">Salva obiettivi</button></form>`;
+}
+
+/* ============ render e navigazione ============ */
+function render() {
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
+  const html = { home: vHome, peso: vPeso, pasti: vPasti, altro: vAltro }[S.tab]();
+  $("#app").innerHTML = `<div class="view">${html}</div>`;
+  if (SH) drawSheet();
+}
+function go(tab, sub) { S.tab = tab; if (sub) S.sub = sub; S.editMatch = null; S.biaEdit = null; S.editPeso = null; render(); window.scrollTo({ top: 0 }); }
+const busyForm = () => document.activeElement && document.activeElement.matches && document.activeElement.matches("input,textarea,select") || !!SH;
+
+document.querySelector(".tabs").addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) go(b.dataset.tab, b.dataset.tab === "altro" ? "menu" : null); });
+
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button,[data-peso],[data-night],[data-act]"); if (!t) return;
+  const A = t.dataset;
+  if (A.go) return go(A.go);
+  if (A.sub) { if (A.sub === "giornata" && S.tab !== "altro") { S.date = today(); S.sDate = S.wDate = null; } return go("altro", A.sub); }
+  if (A.nav) { const nd = addDays(S.date, Number(A.nav)); if (nd <= today()) { S.date = nd; render(); } return; }
+  if (A.wr) { S.wRange = Number(A.wr); return render(); }
+  if (A.sr) { S.sRange = Number(A.sr); return render(); }
+  if (A.night) { S.sDate = A.night; render(); const f = $("#sleepForm"); if (f) f.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  if (A.peso) { const p = S.pesate[A.peso]; S.editPeso = { ...p }; render(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  /* pasti */
+  if (A.add) return openSheet({ mode: "search", meal: A.add, q: "" });
+  if (A.plan) { const pm = PLAN.find(p => p.k === A.plan); return openSheet({ mode: "plan", meal: A.plan, sel: pm.g.map(() => 0), inc: pm.g.map(() => true) }); }
+  if (A.habit) { const items = (S.giorni[S.date].pasti || {})[A.habit] || []; return openSheet({ mode: "habit", meal: A.habit, items: clone(items), nome: MEAL_BY[A.habit].n + " abituale" }); }
+  if (A.edit) { const [mk, i] = A.edit.split(":"); const it = S.giorni[S.date].pasti[mk][Number(i)]; const v = it.v || food(it.n) || [0, 0, 0, 0];
+    return openSheet({ mode: "qty", meal: mk, idx: Number(i), food: [it.n, ...v.slice(0, 4), it.src], g: it.g, focusQ: true }); }
+  if (A.rm) { const [mk, i] = A.rm.split(":"); return saveDay(S.date, d => { d.pasti[mk].splice(Number(i), 1); if (!d.pasti[mk].length) delete d.pasti[mk]; }).then(render); }
+  if (A.pickfood) { const f = allFoods().find(x => x[0] === A.pickfood); const plan = PLAN.find(p => p.k === SH.meal); let g = 100;
+    if (plan) for (const gr of plan.g) for (const o of gr.o) if (o[0] === f[0]) g = o[1];
+    SH = { ...SH, mode: "qty", food: f, g, idx: null, focusQ: true }; return drawSheet(); }
+  if (A.habitadd) { const h = S.abituali[A.habitadd]; const mk = SH.meal; closeSheet();
+    return saveDay(S.date, d => { d.pasti[mk] = (d.pasti[mk] || []).concat(clone(h.items)); }).then(ok => { if (ok) toast("Aggiunto: " + h.nome); render(); }); }
+  if (A.match) { S.editMatch = clone(S.partite[A.match]); render(); window.scrollTo({ top: 0 }); return; }
+  if (A.ownfood) { S.editFood = clone(S.alimenti[A.ownfood]); render(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  switch (A.act) {
+    case "scrim": if (e.target === t) closeSheet(); return;
+    case "closeSheet": return closeSheet();
+    case "backSearch": SH = { ...SH, mode: "search", busy: null, msg: null, bcMiss: false, tok: 0 }; return drawSheet();
+    case "mBarcode": SH = { ...SH, mode: "barcode", bc: /^\d{6,14}$/.test((SH.q || "").trim()) ? SH.q.trim() : "", bcMiss: false, busy: null }; return drawSheet();
+    case "mOnline": SH = { ...SH, mode: "online", oq: SH.oq || SH.q || "", busy: null }; return drawSheet();
+    case "bcGo": return bcLookup($("#bc").value);
+    case "qtyOk": {
+      const g = num($("#sg").value); if (!g || g <= 0) return toast("Inserisci i grammi");
+      const f = SH.food, it = { n: f[0], g, v: [f[1], f[2], f[3], f[4]], src: f[5] }, mk = SH.meal, idx = SH.idx; closeSheet();
+      const ok = await saveDay(S.date, d => { const arr = d.pasti[mk] || (d.pasti[mk] = []); if (idx != null) arr[idx] = it; else arr.push(it); });
+      if (ok) toast(idx != null ? "Quantità aggiornata" : "Aggiunto a " + MEAL_BY[mk].n); return render();
+    }
+    case "planOk": {
+      const pm = PLAN.find(p => p.k === SH.meal), mk = SH.meal;
+      const items = pm.g.map((g, gi) => SH.inc[gi] ? g.o[SH.sel[gi]] : null).filter(Boolean).map(([n, gr]) => { const v = FOODS[n]; return { n, g: gr, v: v.slice(0, 4), src: v[4] }; });
+      closeSheet(); if (!items.length) return;
+      const ok = await saveDay(S.date, d => { d.pasti[mk] = (d.pasti[mk] || []).concat(items); });
+      if (ok) toast(items.length + " alimenti aggiunti come da piano"); return render();
+    }
+    case "habitOk": {
+      const nome = $("#hn").value.trim() || MEAL_BY[SH.meal].n; const h = { id: uid("h"), nome, meal: SH.meal, items: SH.items }; closeSheet();
+      return safe(() => put("abituali", h.id, h), "Pasto abituale salvato").then(render);
+    }
+    case "newFood": SH = { ...SH, mode: "newFood", busy: null, msg: null, f: { n: SH.mode === "online" ? ($("#oq").value || "").trim() : /^\d+$/.test((SH.q || "").trim()) ? "" : SH.q || "", bc: SH.bc || "", fonte: "etichetta" } }; return drawSheet();
+    case "newFoodOk": {
+      const f = readFoodForm(); if (!f.n || f.kcal == null) return toast("Servono almeno nome e kcal");
+      f.fonte = (SH.f && SH.f.fonte) || "etichetta"; f.id = uid("a"); const ok = await safe(() => put("alimenti", f.id, f)); if (!ok) return;
+      SH = { ...SH, mode: "qty", food: [f.n, f.kcal, f.p, f.c, f.l, "P", f], g: 100, idx: null, focusQ: true, msg: null }; return drawSheet();
+    }
+    case "completa": return saveDay(S.date, d => { d.completa = !d.completa; }).then(render);
+    case "pesoCancel": S.editPeso = null; return render();
+    case "pesoDel": { if (t.dataset.sure !== "1") { t.dataset.sure = "1"; t.textContent = "Conferma"; return; }
+      const dt = S.editPeso.date; S.editPeso = null; return safe(() => del("pesate", dt), "Pesata eliminata").then(render); }
+    case "csv": {
+      const rows = [["data", "peso_kg", "media7_kg", "n_misure_7gg", "nota"]].concat(weights().map(p => { const a = avg7(p.date); return [p.date, num(p.peso), a ? a.v.toFixed(2) : "", a ? a.n : "", (p.nota || "").replace(/[\n;]/g, " ")]; }));
+      const csv = rows.map(r => r.join(";")).join("\n");
+      return saveFile("pesate-loackkainn.csv", csv, "text/csv");
+    }
+    case "biaNew": S.biaEdit = { date: today(), _new: true, altezza: S.profilo.altezza, peso: lastW() ? num(lastW().peso) : null }; return render();
+    case "biaEdit": { const vs = Object.values(S.bia).sort((a, b) => b.date.localeCompare(a.date)); S.biaEdit = clone(S.bia[S.biaSel] || vs[0]); return render(); }
+    case "biaCancel": S.biaEdit = null; return render();
+    case "biaDel": { if (t.dataset.sure !== "1") { t.dataset.sure = "1"; t.textContent = "Conferma"; return; } const dt = S.biaEdit.date; S.biaEdit = null; S.biaSel = null; S.biaCmp = ""; return safe(() => del("bia", dt), "Visita eliminata").then(render); }
+    case "newMatch": S.editMatch = { id: uid("m"), data: today(), casa: true, competizione: "Serie A2" }; return render();
+    case "matchCancel": S.editMatch = null; return render();
+    case "matchDel": { if (t.dataset.sure !== "1") { t.dataset.sure = "1"; t.textContent = "Conferma"; return; } const id = S.editMatch.id; S.editMatch = null; return safe(() => del("partite", id), "Partita eliminata").then(render); }
+    case "exportJson": {
+      const o = { app: "loackkainn", versione: 1, esportato: new Date().toISOString(), profilo: S.profilo }; COLS.forEach(c => o[c] = S[c]);
+      return saveFile(`loackkainn-backup-${today()}.json`, JSON.stringify(o, null, 1), "application/json");
+    }
+    case "importOk": {
+      const o = S.imp; if (!o) return; S.imp = null; let n = 0;
+      if (!db) { COLS.forEach(c => { if (o[c]) { Object.assign(S[c], o[c]); n += Object.keys(o[c]).length; } }); if (o.profilo) S.profilo = { ...DEF_PROFILE, ...o.profilo }; saveLocal(); toast(n + " voci importate"); return render(); }
+      toast("Importo…");
+      const ok = await safe(async () => { for (const c of COLS) for (const [id, d] of Object.entries(o[c] || {})) { await put(c, id, d); n++; } if (o.profilo) await putProfile({ ...DEF_PROFILE, ...o.profilo }); });
+      if (ok) toast(n + " voci importate"); return render();
+    }
+    case "importCancel": S.imp = null; return render();
+    case "foodCancel": S.editFood = null; return render();
+    case "foodDel": { if (t.dataset.sure !== "1") { t.dataset.sure = "1"; t.textContent = "Conferma"; return; } const id = S.editFood.id; S.editFood = null; return safe(() => del("alimenti", id), "Alimento eliminato").then(render); }
+  }
+});
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.id === "sq") { SH.q = t.value; $("#sres").innerHTML = searchResults(); return; }
+  if (t.id === "sg") { SH.g = t.value; $("#sgtot").innerHTML = qtyTot(); return; }
+  if (t.id === "aq") { S.aq = t.value; $("#alist").innerHTML = alimList(); return; }
+  if (t.id === "oq") { SH.oq = t.value; $("#olinks").innerHTML = onlineLinks(t.value); return; }
+  if (t.id === "bc") { SH.bc = t.value; return; }
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.id === "dayPick" && t.value) { S.date = t.value > today() ? today() : t.value; return render(); }
+  if (t.dataset.psel != null) { SH.sel[Number(t.dataset.psel)] = Number(t.value); return; }
+  if (t.dataset.pinc != null) { SH.inc[Number(t.dataset.pinc)] = t.checked; return; }
+  if (t.id === "biaSel") { S.biaSel = t.value; if (S.biaCmp === t.value) S.biaCmp = ""; return render(); }
+  if (t.id === "biaCmp") { S.biaCmp = t.value; return render(); }
+  if (t.id === "impFile" && t.files[0]) {
+    t.files[0].text().then(txt => { let o; try { o = JSON.parse(txt); } catch (e) { return toast("Il file non è un backup valido"); }
+      if (!o || typeof o !== "object" || !COLS.some(c => o[c] && typeof o[c] === "object")) return toast("Il file non è un backup di loackkainn");
+      S.imp = o; render(); });
+    return;
+  }
+  if ((t.id === "s-date" || t.id === "w-date") && t.value) { const v = t.value > today() ? today() : t.value; if (t.id === "s-date") S.sDate = v; else S.wDate = v; return render(); }
+  if (t.id === "bcFile" && t.files[0]) {
+    const file = t.files[0], tok = Math.random(); SH = { ...SH, busy: "Leggo il codice a barre…", bcMiss: false, tok }; drawSheet();
+    decodeBarcode(file).then(code => { if (!SH || SH.tok !== tok) return; if (!code) { SH = { ...SH, busy: null }; drawSheet(); return toast("Non riesco a leggere il codice: scrivi il numero"); } bcLookup(code); });
+    return;
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && SH) closeSheet();
+  if (e.key === "Enter" && SH && SH.mode === "barcode" && e.target.id === "bc") { e.preventDefault(); bcLookup(e.target.value); return; }
+  if (e.key === "Enter" && SH && SH.mode === "qty" && e.target.id === "sg") { e.preventDefault(); document.querySelector('[data-act="qtyOk"]').click(); }
+});
+document.addEventListener("submit", async e => {
+  e.preventDefault(); const f = e.target.id, g = id => $("#" + id).value;
+  if (f === "pesoForm") {
+    const date = g("pw-date"), peso = num(g("pw-peso")); if (!date || peso == null || peso < 30 || peso > 250) return toast("Controlla data e peso");
+    const old = S.editPeso && S.editPeso.date !== date ? S.editPeso.date : null;
+    const ok = await safe(async () => { await put("pesate", date, { date, peso, nota: g("pw-nota").trim() }); if (old) await del("pesate", old); }, "Pesata salvata");
+    if (ok) { S.editPeso = null; render(); } return;
+  }
+  if (f === "sleepForm") {
+    const h = num(g("s-h")), m = num(g("s-m")) ?? 0; if (h == null || h < 0 || h > 16 || m < 0 || m > 59) return toast("Controlla ore (0–16) e minuti (0–59)");
+    const dt = g("s-date") || today(); if (dt > today()) return toast("La data non può essere nel futuro");
+    const ok = await saveDay(dt, d => { d.sonno = { ...(d.sonno || {}), h, m, ore: Math.round((h + m / 60) * 100) / 100, qualita: radio("g-sq") }; }); if (ok) { S.sDate = dt; toast("Sonno salvato · " + shortDate(dt)); render(); } return;
+  }
+  if (f === "wellForm") {
+    const dt = g("w-date") || today(); if (dt > today()) return toast("La data non può essere nel futuro");
+    const ok = await saveDay(dt, d => { d.wellness = Object.fromEntries(WELL.map(([k]) => [k, radio("w-" + k)])); }); if (ok) { S.wDate = dt; toast("Wellness salvato · " + shortDate(dt)); render(); } return;
+  }
+  if (f === "biaForm") {
+    const v = { date: g("b-date"), strumento: g("b-str").trim(), note: g("b-note") }; BIA_FORM.forEach(([k]) => v[k] = num(g("b-" + k)));
+    if (!v.date) return toast("Inserisci la data");
+    const old = S.biaEdit && !S.biaEdit._new && S.biaEdit.date !== v.date ? S.biaEdit.date : null;
+    const ok = await safe(async () => { await put("bia", v.date, v); if (old) await del("bia", old); }, "Visita salvata");
+    if (ok) { S.biaEdit = null; S.biaSel = v.date; render(); } return;
+  }
+  if (f === "matchForm") {
+    if (!g("m-avv").trim() || !g("m-data")) return toast("Servono data e avversario");
+    const m = { id: S.editMatch.id, data: g("m-data"), giornata: num(g("m-gio")), avversario: g("m-avv").trim(), casa: g("m-casa") === "1", competizione: g("m-comp"),
+      puntiNoi: num(g("m-noi")), puntiLoro: num(g("m-loro")), maglia: num(g("m-mag")), minuti: num(g("m-min")), mete: num(g("m-mete")),
+      trasf: num(g("m-tf")), trasfTot: num(g("m-tt")), voto: num(g("m-voto")), acciacchi: g("m-acc").trim(), note: g("m-note") };
+    if (m.trasfTot != null && (m.trasf || 0) > m.trasfTot) return toast("Le trasformazioni fatte non possono superare le totali");
+    const ok = await safe(() => put("partite", m.id, m), "Partita salvata"); if (ok) { S.editMatch = null; render(); } return;
+  }
+  if (f === "foodForm") {
+    const a = readFoodForm(); if (!a.n || a.kcal == null) return toast("Servono almeno nome e kcal");
+    a.id = S.editFood ? S.editFood.id : uid("a"); a.fonte = (S.editFood && S.editFood.fonte) || "etichetta"; const ok = await safe(() => put("alimenti", a.id, a), "Alimento salvato"); if (ok) { S.editFood = null; render(); } return;
+  }
+  if (f === "profForm") {
+    const p = { pesoTarget: num(g("p-pt")), pesoData: g("p-pd"), kcal: num(g("p-kcal")) ?? DEF_PROFILE.kcal, p: num(g("p-p")) ?? DEF_PROFILE.p, c: num(g("p-c")) ?? DEF_PROFILE.c, l: num(g("p-l")) ?? DEF_PROFILE.l, sonno: num(g("p-s")) ?? 8, acqua: num(g("p-a")) ?? 3, altezza: num(g("p-h")) ?? 188 };
+    return safe(() => putProfile(p), "Obiettivi salvati").then(render);
+  }
+});
+
+/* ============ avvio ============ */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost") && !window.claude) navigator.serviceWorker.register("sw.js").catch(() => {});
+loadLocal(); render();
+(async () => {
+  let ns = null;
+  try { ns = window.claude && typeof window.claude.use === "function" ? await window.claude.use("db") : null; } catch (e) {}
+  try { dl = window.claude && typeof window.claude.use === "function" ? await window.claude.use("downloads") : null; } catch (e) {}
+  if (!ns) { S.ready = true; if (!busyForm()) render(); return; }
+  db = ns; let pending = COLS.length + 1;
+  const done = () => { if (--pending === 0) S.ready = true; };
+  const refresh = () => { if (!busyForm()) render(); };
+  COLS.forEach(c => { let first = true; db.collection(c).onSnapshot(snap => { const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); }); S[c] = o; if (first) { first = false; done(); } refresh(); }, () => { toast("Sincronizzazione interrotta: ricarica la pagina"); }); });
+  let firstP = true;
+  db.doc("profilo/main").onSnapshot(snap => { S.profilo = { ...DEF_PROFILE, ...(snap.exists ? snap.data() : {}) }; if (firstP) { firstP = false; done(); } refresh(); }, () => {});
+})();
+})();
+</script>
+</body>
+</html>
