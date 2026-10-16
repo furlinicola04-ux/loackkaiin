@@ -1,7 +1,7 @@
 // Service worker: tiene l'app in cache per usarla senza rete.
 // Pagina: prima la rete (così gli aggiornamenti arrivano), poi la cache se sei offline.
 // File statici: prima la cache. Libreria del codice a barre (CDN): cache aggiornata in background.
-const VERSION = "loackkainn-v6";
+const VERSION = "loackkainn-v7";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

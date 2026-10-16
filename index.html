@@ -263,7 +263,7 @@ tr.click:active{background:var(--fill-2)}
 
 /* barra schede in materiale traslucido, il contenuto scorre sotto */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--material);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-top:.5px solid var(--line);padding-top:6px;padding-bottom:max(8px,env(safe-area-inset-bottom,0px));padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
-.tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 .tabs button{border:0;background:transparent;padding:4px 4px 2px;display:grid;justify-items:center;gap:2px;font-size:10.5px;font-weight:500;letter-spacing:.01em;color:var(--muted);cursor:pointer;transition:transform 120ms ease-out}
 .tabs button:active{transform:scale(.92)}
 .tabs svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -354,6 +354,7 @@ tr.click:active{background:var(--fill-2)}
     <button role="tab" data-tab="home" aria-selected="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="2"/></svg>Home</button>
     <button role="tab" data-tab="peso" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3.2 3.2 0 0 0 6 0L5 7zM19 7l-3 7a3.2 3.2 0 0 0 6 0l-3-7z"/></svg>Peso</button>
     <button role="tab" data-tab="pasti" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M6 3v7a2 2 0 0 0 4 0V3M8 10v11M17 21V3c-2.5 1-3.5 4-3.5 7.5 0 1.5 1 2.5 3.5 2.5"/></svg>Pasti</button>
+    <button role="tab" data-tab="sonno" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7z"/></svg>Sonno</button>
     <button role="tab" data-tab="altro" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Altro</button>
   </div>
 </nav>
@@ -570,7 +571,7 @@ function vHome() {
   const pct = (v, g) => g ? Math.min(100, v / g * 100) : 0;
   const mac3 = (lab, v, g, cls) => `<div class="m3 ${cls}"><span class="m3l">${lab}</span><span class="m3v num">${int(v)}<small> / ${int(g)} g</small></span><span class="bar"><i style="width:${pct(v, g)}%"></i></span></div>`;
   return `
-  <header class="home-h"><span class="eyebrow">${esc(dayName(t))}</span><h1>Lock-in di oggi</h1></header>
+  <header class="home-h"><span class="eyebrow">${esc(dayName(t))}</span><h1>Lockando in</h1></header>
 
   <button class="panel" data-go="peso">
     <div class="panel-top"><span class="lab">Peso</span>${tg ? `<span class="aside">obiettivo ${fmt(tg)} kg</span>` : ""}</div>
@@ -588,14 +589,14 @@ function vHome() {
   </button>
 
   <div class="pair">
-    <button class="panel" data-sub="giornata">
+    <button class="panel" data-go="sonno">
       <span class="lab">Sonno</span>
       <div class="mid-n num">${sAvg == null ? "–" : hm(sAvg).replace(" h ", "<small>h</small> ") + "<small>min</small>"}</div>
       <span class="aside">media 7 notti</span>
       <div class="nights" aria-hidden="true">${nights.map(v => `<i class="${v != null && v < goal ? "lo" : ""}" style="height:${v == null ? 4 : Math.max(8, Math.min(100, v / 10 * 100))}%"></i>`).join("")}</div>
       <span class="aside">notte scorsa ${sh == null ? "da inserire" : hm(sh) + " min"}</span>
     </button>
-    <button class="panel" data-sub="giornata">
+    <button class="panel" data-go="sonno">
       <span class="lab">Wellness</span>
       <div class="mid-n num">${wt ?? "–"}<small>/25</small></div>
       <span class="aside">oggi · ${esc(wl)}</span>
@@ -817,7 +818,6 @@ async function bcLookup(code) {
 
 /* ============ ALTRO ============ */
 const MENU = [
-  ["giornata", IC.day, "Sonno e wellness", "Ore dormite, media, grafico e questionario"],
   ["bia", IC.body, "BIA", "Composizione corporea, spiegazione dei valori e confronti"],
   ["partite", IC.ball, "Partite", "Calendario Serie A2 e schede partita"],
   ["piano", IC.apple, "Piano alimentare", "Le opzioni del tuo piano, pasto per pasto"],
@@ -826,7 +826,7 @@ const MENU = [
   ["backup", IC.dl, "Backup dati", "Esporta e importa tutto in un file"]
 ];
 function vAltro() {
-  if (S.sub === "menu") return `<div class="hero"><span class="eyebrow">Altro</span><h1>Tutto il resto</h1><span class="sub">Recupero, composizione corporea, partite e impostazioni.</span></div>
+  if (S.sub === "menu") return `<div class="hero"><span class="eyebrow">Altro</span><h1>Tutto il resto</h1><span class="sub">Composizione corporea, partite, piano e impostazioni.</span></div>
     <div class="menu">${MENU.map(([k, ic, t, s]) => `<button data-sub="${k}"><span class="mi">${ic}</span><span><strong>${t}</strong><small>${s}</small></span>${IC.chev}</button>`).join("")}</div>${footer()}`;
   return ({ giornata: vGiornata, bia: vBia, partite: vPartite, piano: vPiano, alimenti: vAlimenti, obiettivi: vObiettivi, backup: vBackup }[S.sub] || (() => ""))();
 }
@@ -1058,7 +1058,7 @@ addEventListener("scroll", hideTip, { passive: true });
 
 /* ============ navigazione con "indietro" (pulsante in alto e swipe dal bordo sinistro) ============ */
 const NAV = []; // schermate precedenti: { tab, sub, y }
-const TAB_N = { home: "Home", peso: "Peso", pasti: "Pasti", altro: "Altro" };
+const TAB_N = { home: "Home", peso: "Peso", pasti: "Pasti", sonno: "Sonno", altro: "Altro" };
 const subName = k => (MENU.find(m => m[0] === k) || [])[2] || "Altro";
 function backTarget() {
   if (S.tab === "altro" && (S.editMatch || S.biaEdit)) return { label: subName(S.sub), y: 0, apply: () => { S.editMatch = null; S.biaEdit = null; } };
@@ -1066,7 +1066,7 @@ function backTarget() {
   if (S.tab === "altro" && S.sub !== "menu") return { label: "Altro", y: 0, apply: () => { S.sub = "menu"; } };
   return null;
 }
-const viewHtml = () => { const b = backTarget(); return (b ? `<button class="back" data-act="back">${IC.chevL || "‹"} ${esc(b.label)}</button>` : "") + { home: vHome, peso: vPeso, pasti: vPasti, altro: vAltro }[S.tab](); };
+const viewHtml = () => { const b = backTarget(); return (b ? `<button class="back" data-act="back">${IC.chevL || "‹"} ${esc(b.label)}</button>` : "") + { home: vHome, peso: vPeso, pasti: vPasti, sonno: vGiornata, altro: vAltro }[S.tab](); };
 function render() {
   document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
   hideTip(); $("#app").innerHTML = `<div class="view">${viewHtml()}</div>`;
@@ -1074,6 +1074,7 @@ function render() {
 }
 function go(tab, sub, push) {
   if (push) NAV.push({ tab: S.tab, sub: S.sub, y: window.scrollY }); else NAV.length = 0;
+  if (tab === "sonno" && S.tab !== "sonno") { S.date = today(); S.sDate = S.wDate = null; }
   S.tab = tab; if (sub) S.sub = sub; S.editMatch = null; S.biaEdit = null; S.editPeso = null; render(); window.scrollTo({ top: 0 });
 }
 function doBack() { const b = backTarget(); if (!b) return; b.apply(); render(); window.scrollTo({ top: b.y || 0 }); }
@@ -1137,7 +1138,7 @@ document.addEventListener("click", async e => {
   const t = e.target.closest("button,[data-peso],[data-night],[data-act]"); if (!t) return;
   const A = t.dataset;
   if (A.go) return go(A.go, null, true);
-  if (A.sub) { if (A.sub === "giornata" && S.tab !== "altro") { S.date = today(); S.sDate = S.wDate = null; } return go("altro", A.sub, true); }
+  if (A.sub) return go("altro", A.sub, true);
   if (A.nav) { const nd = addDays(S.date, Number(A.nav)); if (nd <= today()) { S.date = nd; render(); } return; }
   if (A.wr) { S.wRange = Number(A.wr); return render(); }
   if (A.sr) { S.sRange = Number(A.sr); return render(); }
