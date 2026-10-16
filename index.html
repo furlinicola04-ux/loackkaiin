@@ -300,9 +300,19 @@ tr.click:active{background:var(--fill-2)}
 .hero-n{font-family:var(--display);font-size:60px;font-weight:700;line-height:1;letter-spacing:-.035em;margin-top:10px;font-variant-numeric:tabular-nums}
 .hero-n small,.mid-n small{font-size:.36em;font-weight:600;color:var(--muted);letter-spacing:-.01em}
 .mid-n{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;letter-spacing:-.03em;margin-top:12px;font-variant-numeric:tabular-nums}
-.spark{width:100%;height:64px;display:block;margin:14px 0 4px;overflow:visible}
-.spark path{stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.spark circle{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.spark{width:100%;height:auto;display:block;margin:16px 0 2px;overflow:visible}
+.spark .g{stroke:var(--line);stroke-width:1}
+.spark .ax{fill:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.spark .goal{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:4 4;opacity:.55}
+.spark .gl{fill:var(--muted);font-size:11px;font-weight:600}
+.spark .ma{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.spark .pt{fill:var(--ink);opacity:.35}
+.spark .end{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.spark-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);margin:2px 0 6px}
+.spark-leg span{display:inline-flex;align-items:center;gap:6px}
+.spark-leg i{display:inline-block}.spark-leg .l{width:14px;height:3px;border-radius:2px;background:var(--accent)}
+.spark-leg .d{width:6px;height:6px;border-radius:50%;background:var(--ink);opacity:.35}
+.spark-leg .k{width:14px;border-top:1.5px dashed var(--ink);opacity:.55}
 .spark-empty{height:64px;display:grid;place-items:center;font-size:13px;color:var(--muted);background:var(--fill-2);border-radius:12px;margin:14px 0 4px}
 .panel-foot{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);border-top:.5px solid var(--line);padding-top:10px;margin-top:4px}
 .bar{display:block;height:6px;border-radius:99px;background:var(--fill);overflow:hidden}
@@ -508,13 +518,32 @@ const mbar = (lab, color, v, t, unit = "g") => {
 
 /* ============ HOME ============ */
 function sparkW(t, n = 14) {
-  const pts = Array.from({ length: n }, (_, i) => { const d = addDays(t, i - n + 1), p = S.pesate[d]; return { i, v: p ? num(p.peso) : null }; }).filter(p => p.v != null);
-  if (pts.length < 2) return `<div class="spark-empty">Servono almeno due pesate per la linea</div>`;
-  const W = 320, H = 64, lo = Math.min(...pts.map(p => p.v)) - .3, hi = Math.max(...pts.map(p => p.v)) + .3;
-  const x = i => 4 + i / (n - 1) * (W - 8), y = v => 6 + (1 - (v - lo) / (hi - lo)) * (H - 12);
-  const path = pts.map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`).join("");
-  const e = pts.at(-1);
-  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${path}" fill="none" vector-effect="non-scaling-stroke"/><circle cx="${x(e.i)}" cy="${y(e.v)}" r="3.5"/></svg>`;
+  // se le pesate iniziano dopo l'inizio della finestra, il grafico parte dalla prima (minimo 7 giorni)
+  const first = Array.from({ length: n }, (_, i) => addDays(t, i - n + 1)).findIndex(d => S.pesate[d] && num(S.pesate[d].peso) != null);
+  if (first > 0) n = Math.max(7, n - first);
+  const days = Array.from({ length: n }, (_, i) => addDays(t, i - n + 1)); sparkW.from = days[0];
+  const pts = days.map((d, i) => { const p = S.pesate[d]; return { i, v: p ? num(p.peso) : null }; }).filter(p => p.v != null);
+  if (pts.length < 2) return `<div class="spark-empty">Servono almeno due pesate per il grafico</div>`;
+  const ma = days.map((d, i) => { const a = avg7(d); return a && pts.some(p => p.i <= i) ? { i, v: a.v } : null; }).filter(Boolean);
+  const tg = num(S.profilo.pesoTarget), vals = pts.map(p => p.v).concat(ma.map(p => p.v));
+  // il range include l'obiettivo solo se è vicino (entro 3 kg), altrimenti resta un'etichetta col freccia
+  const near = tg != null && Math.abs(tg - (vals.reduce((a, b) => a + b) / vals.length)) <= 3;
+  let lo = Math.min(...vals, ...(near ? [tg] : [])), hi = Math.max(...vals, ...(near ? [tg] : []));
+  const span = Math.max(1.5, hi - lo); const step = span > 4 ? 1 : .5;
+  lo = Math.floor((lo - span * .08) / step) * step; hi = Math.ceil((hi + span * .08) / step) * step;
+  const ticks = []; for (let v = lo; v <= hi + 1e-9; v += step) ticks.push(+v.toFixed(1));
+  const tk = ticks.length > 5 ? ticks.filter((_, k) => k % 2 === 0) : ticks;
+  const W = 320, H = 150, L = 4, R = 34, T = 10, B = 22;
+  const x = i => L + i / (n - 1) * (W - L - R), y = v => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  const grid = tk.map(v => `<line class="g" x1="${L}" x2="${W - R}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text class="ax" x="${W - R + 6}" y="${(y(v) + 4).toFixed(1)}">${fmt(v, step < 1 ? 1 : 0)}</text>`).join("");
+  const xl = [0, Math.round((n - 1) / 2), n - 1].map((i, k) => `<text class="ax" x="${x(i).toFixed(1)}" y="${H - 5}" text-anchor="${["start", "middle", "end"][k]}">${i === n - 1 ? "oggi" : shortDate(days[i])}</text>`).join("");
+  const goal = near ? `<line class="goal" x1="${L}" x2="${W - R}" y1="${y(tg).toFixed(1)}" y2="${y(tg).toFixed(1)}"/><text class="gl" x="${L + 2}" y="${(y(tg) - 5).toFixed(1)}">obiettivo ${fmt(tg)}</text>` : "";
+  const line = ma.length > 1 ? `<path class="ma" d="${ma.map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`).join("")}"/>` : "";
+  const dots = pts.map(p => `<circle class="pt" cx="${x(p.i).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="2.6"/>`).join("");
+  const e = ma.at(-1);
+  const end = e ? `<circle class="end" cx="${x(e.i).toFixed(1)}" cy="${y(e.v).toFixed(1)}" r="4"/>` : "";
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Peso degli ultimi ${n} giorni: pesate e media mobile a 7 giorni">${grid}${goal}${line}${dots}${end}${xl}</svg>
+  <div class="spark-leg"><span><i class="l"></i>media 7 gg</span><span><i class="d"></i>pesata</span>${tg != null && !near ? `<span><i class="k"></i>obiettivo ${fmt(tg)} kg ${tg > hi ? "↑ sopra il grafico" : "↓ sotto il grafico"}</span>` : ""}</div>`;
 }
 function vHome() {
   const t = today(), P = S.profilo, lw = lastW(), a7 = avg7(t), a7p = avg7(addDays(t, -7));
@@ -535,7 +564,7 @@ function vHome() {
     <div class="hero-n num">${a7 ? fmt(a7.v) : "–"}<small> kg</small></div>
     <div class="aside">media 7 giorni${trend == null ? "" : ` · ${trend > 0 ? "+" : trend < 0 ? "−" : "±"}${fmt(Math.abs(trend))} kg sulla settimana prima`}</div>
     ${sparkW(t)}
-    <div class="panel-foot"><span>14 giorni</span><span>${lw ? (lw.date === t ? "oggi " : "ultima " + shortDate(lw.date) + " · ") + fmt(num(lw.peso)) + " kg" : "nessuna pesata"}</span></div>
+    <div class="panel-foot"><span>dal ${shortDate(sparkW.from || addDays(t, -13))}</span><span>${lw ? (lw.date === t ? "oggi " : "ultima " + shortDate(lw.date) + " · ") + fmt(num(lw.peso)) + " kg" : "nessuna pesata"}</span></div>
   </button>
 
   <button class="panel" data-go="pasti">
