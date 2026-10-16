@@ -225,7 +225,11 @@ tr.click:active{background:var(--fill-2)}
 .menu strong{display:block;font-weight:400}
 .menu small{display:block;color:var(--muted);font-size:13px}
 .menu>button>svg{width:14px;height:14px;stroke:var(--muted-2);fill:none;stroke-width:2.5}
-.back{display:inline-flex;align-items:center;gap:2px;background:none;border:0;color:var(--accent);font-size:17px;padding:6px 0;cursor:pointer;width:max-content}
+.back{display:inline-flex;align-items:center;gap:2px;background:none;border:0;color:var(--accent);font-size:17px;padding:8px 12px 8px 0;margin:-4px 0 -6px -2px;cursor:pointer;width:max-content;min-height:44px}
+.back svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.under{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:var(--bg);will-change:transform}
+.under::after{content:"";position:absolute;inset:0;background:#000;opacity:var(--dim,0)}
+#app.swiping{position:relative;z-index:1;background:var(--bg);min-height:100dvh;box-shadow:-10px 0 30px rgba(0,0,0,.14);will-change:transform}
 .back:active{opacity:.5}
 
 /* piano */
@@ -362,6 +366,7 @@ const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(
 const clone = o => JSON.parse(JSON.stringify(o));
 const toast = msg => { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 2400); };
 const IC = {
+  chevL: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
   barcode: '<svg viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M10 6v12M14 6v12M17 6v12M20 6v12"/></svg>',
   camera: '<svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>',
   pen: '<svg viewBox="0 0 24 24"><path d="M5 19h14M7 15l9-9 3 3-9 9H7z"/></svg>',
@@ -781,8 +786,7 @@ const MENU = [
 function vAltro() {
   if (S.sub === "menu") return `<div class="hero"><span class="eyebrow">Altro</span><h1>Tutto il resto</h1><span class="sub">Recupero, composizione corporea, partite e impostazioni.</span></div>
     <div class="menu">${MENU.map(([k, ic, t, s]) => `<button data-sub="${k}"><span class="mi">${ic}</span><span><strong>${t}</strong><small>${s}</small></span>${IC.chev}</button>`).join("")}</div>${footer()}`;
-  const back = `<button class="back" data-sub="menu">‹ Altro</button>`;
-  return back + ({ giornata: vGiornata, bia: vBia, partite: vPartite, piano: vPiano, alimenti: vAlimenti, obiettivi: vObiettivi, backup: vBackup }[S.sub] || (() => ""))();
+  return ({ giornata: vGiornata, bia: vBia, partite: vPartite, piano: vPiano, alimenti: vAlimenti, obiettivi: vObiettivi, backup: vBackup }[S.sub] || (() => ""))();
 }
 
 /* --- giornata --- */
@@ -993,13 +997,79 @@ function vObiettivi() {
 }
 
 /* ============ render e navigazione ============ */
+/* ============ navigazione con "indietro" (pulsante in alto e swipe dal bordo sinistro) ============ */
+const NAV = []; // schermate precedenti: { tab, sub, y }
+const TAB_N = { home: "Home", peso: "Peso", pasti: "Pasti", altro: "Altro" };
+const subName = k => (MENU.find(m => m[0] === k) || [])[2] || "Altro";
+function backTarget() {
+  if (S.tab === "altro" && (S.editMatch || S.biaEdit)) return { label: subName(S.sub), y: 0, apply: () => { S.editMatch = null; S.biaEdit = null; } };
+  if (NAV.length) { const e = NAV.at(-1); return { label: e.tab === "altro" && e.sub !== "menu" ? subName(e.sub) : TAB_N[e.tab], y: e.y, apply: () => { NAV.pop(); S.tab = e.tab; S.sub = e.sub; S.editMatch = null; S.biaEdit = null; S.editPeso = null; } }; }
+  if (S.tab === "altro" && S.sub !== "menu") return { label: "Altro", y: 0, apply: () => { S.sub = "menu"; } };
+  return null;
+}
+const viewHtml = () => { const b = backTarget(); return (b ? `<button class="back" data-act="back">${IC.chevL || "‹"} ${esc(b.label)}</button>` : "") + { home: vHome, peso: vPeso, pasti: vPasti, altro: vAltro }[S.tab](); };
 function render() {
   document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
-  const html = { home: vHome, peso: vPeso, pasti: vPasti, altro: vAltro }[S.tab]();
-  $("#app").innerHTML = `<div class="view">${html}</div>`;
+  $("#app").innerHTML = `<div class="view">${viewHtml()}</div>`;
   if (SH) drawSheet();
 }
-function go(tab, sub) { S.tab = tab; if (sub) S.sub = sub; S.editMatch = null; S.biaEdit = null; S.editPeso = null; render(); window.scrollTo({ top: 0 }); }
+function go(tab, sub, push) {
+  if (push) NAV.push({ tab: S.tab, sub: S.sub, y: window.scrollY }); else NAV.length = 0;
+  S.tab = tab; if (sub) S.sub = sub; S.editMatch = null; S.biaEdit = null; S.editPeso = null; render(); window.scrollTo({ top: 0 });
+}
+function doBack() { const b = backTarget(); if (!b) return; b.apply(); render(); window.scrollTo({ top: b.y || 0 }); }
+/* anteprima della schermata precedente, senza toccare lo stato */
+function previewBack() {
+  const keep = { tab: S.tab, sub: S.sub, editMatch: S.editMatch, biaEdit: S.biaEdit, editPeso: S.editPeso }, nav = NAV.slice();
+  const b = backTarget(); b.apply(); let html = ""; try { html = viewHtml(); } finally { Object.assign(S, keep); NAV.length = 0; NAV.push(...nav); }
+  return { html, y: b.y || 0 };
+}
+/* swipe dal bordo sinistro: segue il dito 1:1, al rilascio proietta la velocità e decide se tornare indietro (apple-design §2, §5, §6) */
+let SW = null;
+const EDGE = 28, EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.addEventListener("touchstart", e => {
+  if (SW || SH || e.touches.length !== 1) return; const t = e.touches[0];
+  if (t.clientX > EDGE || !backTarget()) return;
+  SW = { x0: t.clientX, y0: t.clientY, dx: 0, lock: null, hist: [[t.clientX, e.timeStamp]] };
+}, { passive: true });
+document.addEventListener("touchmove", e => {
+  if (!SW) return; const t = e.touches[0], dx = t.clientX - SW.x0, dy = t.clientY - SW.y0;
+  if (!SW.lock) {
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+    if (dx > 0 && Math.abs(dx) > Math.abs(dy) * 1.2) { SW.lock = "x"; swipeStart(); } else { SW = null; return; }
+  }
+  e.preventDefault();
+  SW.hist.push([t.clientX, e.timeStamp]); if (SW.hist.length > 6) SW.hist.shift();
+  swipeMove(Math.max(0, dx));
+}, { passive: false });
+const swipeEndEv = e => { if (!SW) return; if (SW.lock !== "x") { SW = null; return; } swipeEnd(e.type === "touchcancel"); };
+document.addEventListener("touchend", swipeEndEv); document.addEventListener("touchcancel", swipeEndEv);
+function swipeStart() {
+  const pv = previewBack(), u = document.createElement("main");
+  u.className = "under"; u.setAttribute("aria-hidden", "true"); u.innerHTML = `<div class="view" style="transform:translateY(${-pv.y}px)">${pv.html}</div>`;
+  document.body.insertBefore(u, $("#app")); $("#app").classList.add("swiping");
+  SW.u = u; SW.w = window.innerWidth; SW.scrollY = window.scrollY;
+}
+function swipeMove(dx) {
+  SW.dx = dx; const p = Math.min(1, dx / SW.w);
+  $("#app").style.transform = `translateX(${dx}px)`;
+  SW.u.style.transform = reduceMotion() ? "none" : `translateX(${-30 * (1 - p)}%)`; SW.u.style.setProperty("--dim", String(.12 * (1 - p)));
+}
+function swipeEnd(cancel) {
+  const s = SW, h = s.hist, a = h[0], b = h.at(-1), v = b[1] > a[1] ? (b[0] - a[0]) / (b[1] - a[1]) * 1000 : 0; // px/s
+  const projected = s.dx + (v / 1000) * .998 / (1 - .998); // proiezione del momento (Apple)
+  const commit = !cancel && projected > s.w / 2 && v > -200;
+  const app = $("#app"), p = s.dx / s.w, dur = Math.round(Math.max(160, Math.min(380, 380 * (commit ? 1 - p : p))));
+  const opts = { duration: reduceMotion() ? 120 : dur, easing: EASE, fill: "forwards" };
+  const a1 = app.animate([{ transform: `translateX(${s.dx}px)` }, { transform: `translateX(${commit ? s.w : 0}px)` }], opts);
+  s.u.animate([{ transform: s.u.style.transform || "none", "--dim": String(.12 * (1 - p)) }, { transform: commit || reduceMotion() ? "none" : "translateX(-30%)" }], opts);
+  SW = { busy: true };
+  a1.finished.then(() => {
+    s.u.remove(); app.classList.remove("swiping"); app.getAnimations().forEach(x => x.cancel()); app.style.transform = "";
+    SW = null; if (commit) doBack();
+  });
+}
 const busyForm = () => document.activeElement && document.activeElement.matches && document.activeElement.matches("input,textarea,select") || !!SH;
 
 document.querySelector(".tabs").addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) go(b.dataset.tab, b.dataset.tab === "altro" ? "menu" : null); });
@@ -1007,8 +1077,8 @@ document.querySelector(".tabs").addEventListener("click", e => { const b = e.tar
 document.addEventListener("click", async e => {
   const t = e.target.closest("button,[data-peso],[data-night],[data-act]"); if (!t) return;
   const A = t.dataset;
-  if (A.go) return go(A.go);
-  if (A.sub) { if (A.sub === "giornata" && S.tab !== "altro") { S.date = today(); S.sDate = S.wDate = null; } return go("altro", A.sub); }
+  if (A.go) return go(A.go, null, true);
+  if (A.sub) { if (A.sub === "giornata" && S.tab !== "altro") { S.date = today(); S.sDate = S.wDate = null; } return go("altro", A.sub, true); }
   if (A.nav) { const nd = addDays(S.date, Number(A.nav)); if (nd <= today()) { S.date = nd; render(); } return; }
   if (A.wr) { S.wRange = Number(A.wr); return render(); }
   if (A.sr) { S.sRange = Number(A.sr); return render(); }
@@ -1029,6 +1099,7 @@ document.addEventListener("click", async e => {
   if (A.match) { S.editMatch = clone(S.partite[A.match]); render(); window.scrollTo({ top: 0 }); return; }
   if (A.ownfood) { S.editFood = clone(S.alimenti[A.ownfood]); render(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
   switch (A.act) {
+    case "back": return doBack();
     case "scrim": if (e.target === t) closeSheet(); return;
     case "closeSheet": return closeSheet();
     case "backSearch": SH = { ...SH, mode: "search", busy: null, msg: null, bcMiss: false, tok: 0 }; return drawSheet();
